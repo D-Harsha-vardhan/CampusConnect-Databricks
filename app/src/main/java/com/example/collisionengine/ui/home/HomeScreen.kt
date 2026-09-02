@@ -122,7 +122,7 @@ fun HomeScreen(
                             QuickActionCard(icon = Icons.Filled.MenuBook, label = "Papers", onClick = onNavigateToResearch)
                         }
                         item {
-                            QuickActionCard(icon = Icons.Filled.HelpOutline, label = "What if ?", onClick = onNavigateToPlacement)
+                            QuickActionCard(icon = androidx.compose.material.icons.automirrored.filled.HelpOutline, label = "What if ?", onClick = onNavigateToPlacement)
                         }
                         item {
                             QuickActionCard(icon = Icons.Filled.Event, label = "Insights", onClick = {})
