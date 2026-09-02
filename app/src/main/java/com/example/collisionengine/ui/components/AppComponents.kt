@@ -161,7 +161,7 @@ fun SearchBar(
                     .background(PrimaryBlue, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Filled.Settings, contentDescription = "Filter", tint = Color.White)
+                Icon(Icons.Filled.Search, contentDescription = "Search", tint = Color.White)
             }
         },
         shape = RoundedCornerShape(30.dp),
