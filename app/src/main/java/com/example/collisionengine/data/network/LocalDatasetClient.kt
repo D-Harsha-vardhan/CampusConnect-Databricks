@@ -64,7 +64,7 @@ object LocalDatasetClient {
             ProfileMatch(
                 name = student.name ?: "Unknown",
                 role = "${student.department ?: ""} • Year ${student.year ?: ""}",
-                matchReasonTitle = "Related to your query",
+                matchReasonTitle = "Project Contributor",
                 matchReasonText = student.projects?.takeIf { it.isNotBlank() } ?: student.skills ?: "",
                 tags = student.skills?.split(",")?.map { it.trim() }?.take(4) ?: emptyList()
             )
@@ -79,7 +79,7 @@ object LocalDatasetClient {
             ProfileMatch(
                 name = faculty.name ?: "Unknown",
                 role = "Faculty • ${faculty.department ?: ""}",
-                matchReasonTitle = "Related to your query",
+                matchReasonTitle = "Research Advisor",
                 matchReasonText = faculty.expertise ?: "",
                 tags = faculty.researchInterests?.split(",")?.map { it.trim() }?.take(4) ?: emptyList()
             )
@@ -99,7 +99,7 @@ object LocalDatasetClient {
             ProfileMatch(
                 name = student.name ?: "Unknown",
                 role = "${student.department ?: ""} • Year ${student.year ?: ""}",
-                matchReasonTitle = "Name Match",
+                matchReasonTitle = "Project Contributor",
                 matchReasonText = student.projects?.takeIf { it.isNotBlank() } ?: student.skills ?: "",
                 tags = student.skills?.split(",")?.map { it.trim() }?.take(4) ?: emptyList()
             )
@@ -110,7 +110,7 @@ object LocalDatasetClient {
             ProfileMatch(
                 name = faculty.name ?: "Unknown",
                 role = "Faculty • ${faculty.department ?: ""}",
-                matchReasonTitle = "Name Match",
+                matchReasonTitle = "Research Advisor",
                 matchReasonText = faculty.expertise ?: "",
                 tags = faculty.researchInterests?.split(",")?.map { it.trim() }?.take(4) ?: emptyList()
             )
@@ -176,7 +176,7 @@ object LocalDatasetClient {
                 ProfileMatch(
                     name = student.name ?: "Unknown",
                     role = "${student.department ?: ""} • Year ${student.year ?: ""}",
-                    matchReasonTitle = "Keyword Match",
+                    matchReasonTitle = "Project Contributor",
                     matchReasonText = student.projects?.takeIf { it.isNotBlank() } ?: student.skills ?: "",
                     tags = student.skills?.split(",")?.map { it.trim() }?.take(4) ?: emptyList()
                 )
@@ -192,7 +192,7 @@ object LocalDatasetClient {
                 ProfileMatch(
                     name = faculty.name ?: "Unknown",
                     role = "Faculty • ${faculty.department ?: ""}",
-                    matchReasonTitle = "Keyword Match",
+                    matchReasonTitle = "Research Advisor",
                     matchReasonText = faculty.expertise ?: "",
                     tags = faculty.researchInterests?.split(",")?.map { it.trim() }?.take(4) ?: emptyList()
                 )

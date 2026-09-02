@@ -14,11 +14,19 @@ class ResearchViewModel : ViewModel() {
     private val _queryText = MutableStateFlow("")
     val queryText: StateFlow<String> = _queryText.asStateFlow()
     
-    private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
     val messages: StateFlow<List<ChatMessage>> = _messages.asStateFlow()
     
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    companion object {
+        // In-memory chat session persistence
+        private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
+        
+        fun clearSession() {
+            _messages.value = emptyList()
+        }
+    }
 
     fun onQueryChanged(newText: String) {
         _queryText.value = newText

@@ -62,6 +62,11 @@ fun ResearchScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.Black)
                     }
                 },
+                actions = {
+                    IconButton(onClick = { ResearchViewModel.clearSession() }) {
+                        Icon(androidx.compose.material.icons.Icons.Default.Delete, contentDescription = "Clear Chat", tint = Color.Gray)
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.White
                 )

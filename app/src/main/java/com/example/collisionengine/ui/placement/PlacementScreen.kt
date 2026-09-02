@@ -63,6 +63,11 @@ fun PlacementScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
                 },
+                actions = {
+                    IconButton(onClick = { PlacementViewModel.clearSession() }) {
+                        Icon(androidx.compose.material.icons.Icons.Default.Delete, contentDescription = "Clear Chat", tint = Color.White)
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF0F172A)
                 )

@@ -14,11 +14,19 @@ class PlacementViewModel : ViewModel() {
     private val _queryText = MutableStateFlow("")
     val queryText: StateFlow<String> = _queryText.asStateFlow()
     
-    private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
     val messages: StateFlow<List<ChatMessage>> = _messages.asStateFlow()
     
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    companion object {
+        // In-memory chat session persistence
+        private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
+        
+        fun clearSession() {
+            _messages.value = emptyList()
+        }
+    }
 
     fun onQueryChanged(newText: String) {
         _queryText.value = newText
@@ -39,8 +47,8 @@ class PlacementViewModel : ViewModel() {
             
             // Add AI response, making TopMatch dynamic based on extracted names and keywords
             val extractedNames = com.example.collisionengine.data.network.NvidiaClient.extractNames(result)
-            val nameMatchedProfiles = com.example.collisionengine.data.network.SupabaseClient.searchProfilesByNames(extractedNames)
-            val keywordMatchedProfiles = com.example.collisionengine.data.network.SupabaseClient.searchProfilesByKeywords(query)
+            val nameMatchedProfiles = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByNames(extractedNames)
+            val keywordMatchedProfiles = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByKeywords(query)
             
             val allMatchedProfiles = (nameMatchedProfiles + keywordMatchedProfiles).distinctBy { it.name }.take(5)
             
