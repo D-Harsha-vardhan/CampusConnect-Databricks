@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.clickable
@@ -122,7 +123,7 @@ fun HomeScreen(
                             QuickActionCard(icon = Icons.Filled.MenuBook, label = "Papers", onClick = onNavigateToResearch)
                         }
                         item {
-                            QuickActionCard(icon = androidx.compose.material.icons.automirrored.filled.HelpOutline, label = "What if ?", onClick = onNavigateToPlacement)
+                            QuickActionCard(icon = Icons.Filled.HelpOutline, label = "What if ?", onClick = onNavigateToPlacement)
                         }
                         item {
                             QuickActionCard(icon = Icons.Filled.Event, label = "Insights", onClick = {})
