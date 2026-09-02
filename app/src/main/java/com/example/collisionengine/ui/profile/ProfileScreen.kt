@@ -396,32 +396,6 @@ fun ActivityTimelineItem(
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
     ) {
-        // Timeline Column
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(top = 4.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .shadow(4.dp, CircleShape, spotColor = PrimaryBlue.copy(alpha = 0.2f))
-                    .background(Color.White, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(icon, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(20.dp))
-            }
-            if (!isLast) {
-                Divider(
-                    color = PrimaryBlue.copy(alpha = 0.2f),
-                    modifier = Modifier
-                        .width(2.dp)
-                        .height(100.dp)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.width(16.dp))
-
         // Content Card
         Card(
             modifier = Modifier
