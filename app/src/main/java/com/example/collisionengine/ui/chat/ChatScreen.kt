@@ -75,6 +75,7 @@ fun ChatScreen(
                                     color = PrimaryBlue
                                 )
                             }
+                        }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
