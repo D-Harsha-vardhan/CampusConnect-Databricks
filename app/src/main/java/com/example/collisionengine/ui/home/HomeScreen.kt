@@ -225,7 +225,7 @@ fun HomeScreen(
                                     name = "Dr. Emily Chen",
                                     role = "Faculty • Computer Science",
                                     matchReasonTitle = "Research Author",
-                                    matchReasonText = "Optimizing LLM Inference on Edge Devices",
+                                    matchReasonText = "Optimizing LLM Inference on Edge Devices; Deep Learning; Neuromorphic Computing; AI Accelerators",
                                     tags = listOf("AI", "Edge Computing", "LLM")
                                 )
                             )
@@ -245,7 +245,7 @@ fun HomeScreen(
                                     name = "Michael Ross",
                                     role = "Computer Science • Year 4",
                                     matchReasonTitle = "Research Author",
-                                    matchReasonText = "Graph Neural Networks for Social Recommendation",
+                                    matchReasonText = "Graph Neural Networks for Social Recommendation; Machine Learning; Network Theory; Distributed Systems",
                                     tags = listOf("GNN", "Social Networks", "ML")
                                 )
                             )
@@ -265,7 +265,7 @@ fun HomeScreen(
                                     name = "Sarah Jenkins",
                                     role = "Electrical Engineering • Year 3",
                                     matchReasonTitle = "Research Author",
-                                    matchReasonText = "Sustainable Battery Technologies",
+                                    matchReasonText = "Sustainable Battery Technologies; Solid-State Batteries; Renewable Energy Systems; Power Electronics",
                                     tags = listOf("Green Tech", "Hardware", "Energy")
                                 )
                             )

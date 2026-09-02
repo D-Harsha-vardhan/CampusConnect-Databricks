@@ -286,50 +286,6 @@ fun ExplanationScreen(
                 }
             }
 
-            // Match Score Card
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F6FF)),
-                    border = BorderStroke(1.dp, PrimaryBlue.copy(alpha = 0.25f))
-                ) {
-                    Row(
-                        modifier = Modifier.padding(18.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(PrimaryBlue),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Default.Star,
-                                contentDescription = "Match Score",
-                                tint = Color.White,
-                                modifier = Modifier.size(26.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column {
-                            Text(
-                                text = "$score% High Match",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = TextPrimaryLight
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = "Matched based on strong technical domain overlap with your queries.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextSecondaryLight
-                            )
-                        }
-                    }
-                }
-            }
 
             // Projects Section (if student or has projects)
             if (projectsList.isNotEmpty()) {
