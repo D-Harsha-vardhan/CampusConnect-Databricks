@@ -97,7 +97,7 @@ fun ChatScreen(
         },
         bottomBar = {
             Surface(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 85.dp),
                 color = Color.White,
                 shadowElevation = 8.dp
             ) {

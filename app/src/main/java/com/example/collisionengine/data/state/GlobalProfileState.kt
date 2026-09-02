@@ -6,6 +6,6 @@ object GlobalProfileState {
     val name = MutableStateFlow("Rahul Bose")
     val role = MutableStateFlow("Computer Science @ MIT")
     val bio = MutableStateFlow("Passionate about AI, scalable systems, and building tools that connect researchers globally. Always open to collaborate!")
-    val githubLink = MutableStateFlow("https://github.com/")
+    val researchGateLink = MutableStateFlow("https://www.researchgate.net/")
     val googleScholarLink = MutableStateFlow("https://scholar.google.com/")
 }

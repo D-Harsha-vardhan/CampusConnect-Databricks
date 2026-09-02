@@ -35,7 +35,8 @@ import androidx.compose.foundation.lazy.items
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToConnections: () -> Unit
 ) {
     var isLiked1 by remember { mutableStateOf(true) }
     var isLiked2 by remember { mutableStateOf(false) }
@@ -43,14 +44,12 @@ fun ProfileScreen(
     val userName by GlobalProfileState.name.collectAsState()
     val userRole by GlobalProfileState.role.collectAsState()
     val userBio by GlobalProfileState.bio.collectAsState()
-    val githubLink by GlobalProfileState.githubLink.collectAsState()
+    val researchGateLink by GlobalProfileState.researchGateLink.collectAsState()
     val googleScholarLink by GlobalProfileState.googleScholarLink.collectAsState()
 
     val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
 
     var showEditDialog by remember { mutableStateOf(false) }
-    var showConnectionsDialog by remember { mutableStateOf(false) }
-    var showPapersDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -168,9 +167,9 @@ fun ProfileScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (githubLink.isNotBlank()) {
+                    if (researchGateLink.isNotBlank()) {
                         Text(
-                            text = "GitHub",
+                            text = "ResearchGate",
                             color = PrimaryBlue,
                             style = MaterialTheme.typography.labelLarge,
                             modifier = Modifier
@@ -178,7 +177,7 @@ fun ProfileScreen(
                                 .background(PrimaryBlue.copy(alpha = 0.1f))
                                 .clickable {
                                     try {
-                                        var url = githubLink.trim()
+                                        var url = researchGateLink.trim()
                                         if (!url.startsWith("http://") && !url.startsWith("https://")) {
                                             url = "https://$url"
                                         }
@@ -216,7 +215,6 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Stats Row
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -225,7 +223,7 @@ fun ProfileScreen(
                         .padding(vertical = 16.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Box(modifier = Modifier.clickable { showConnectionsDialog = true }) {
+                    Box(modifier = Modifier.clickable { onNavigateToConnections() }) {
                         ProfileStat(count = "24", label = "Connections")
                     }
                     Divider(
@@ -234,7 +232,7 @@ fun ProfileScreen(
                             .width(1.dp),
                         color = BackgroundLight
                     )
-                    Box(modifier = Modifier.clickable { showPapersDialog = true }) {
+                    Box {
                         ProfileStat(count = "5", label = "Papers")
                     }
                     Divider(
@@ -267,9 +265,9 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Activity Section
+            // Published Papers Section
             Text(
-                text = "My Activity",
+                text = "Published Papers",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimaryLight,
@@ -278,21 +276,23 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            ActivityTimelineItem(
-                title = "Optimizing LLM Inference",
-                subtitle = "Published • 2 days ago",
-                icon = Icons.Filled.Edit,
-                tags = listOf("AI", "Machine Learning", "Research"),
-                isLast = false
+            val papers = listOf(
+                "Edge AI and Computer Vision",
+                "Distributed Systems in Healthcare",
+                "IoT for Smart Parking",
+                "LLMs for Code Generation",
+                "Graph Neural Networks"
             )
 
-            ActivityTimelineItem(
-                title = "Software Eng Prep Group",
-                subtitle = "Joined • 1 week ago",
-                icon = Icons.Filled.Person,
-                tags = listOf("Mock Interviews", "Placement", "FAANG"),
-                isLast = true
-            )
+            papers.forEachIndexed { index, paper ->
+                ActivityTimelineItem(
+                    title = paper,
+                    subtitle = "Published Paper",
+                    icon = Icons.Filled.Edit,
+                    tags = listOf("Research", "Publication"),
+                    isLast = index == papers.size - 1
+                )
+            }
 
             Spacer(modifier = Modifier.height(120.dp)) // Padding for bottom nav
         }
@@ -302,7 +302,7 @@ fun ProfileScreen(
         var editName by remember { mutableStateOf(userName) }
         var editRole by remember { mutableStateOf(userRole) }
         var editBio by remember { mutableStateOf(userBio) }
-        var editGithub by remember { mutableStateOf(githubLink) }
+        var editResearchGate by remember { mutableStateOf(researchGateLink) }
         var editScholar by remember { mutableStateOf(googleScholarLink) }
         
         AlertDialog(
@@ -342,9 +342,9 @@ fun ProfileScreen(
                         shape = RoundedCornerShape(12.dp)
                     )
                     OutlinedTextField(
-                        value = editGithub,
-                        onValueChange = { editGithub = it },
-                        label = { Text("GitHub Link") },
+                        value = editResearchGate,
+                        onValueChange = { editResearchGate = it },
+                        label = { Text("ResearchGate Link") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp)
                     )
@@ -363,7 +363,7 @@ fun ProfileScreen(
                         GlobalProfileState.name.value = editName
                         GlobalProfileState.role.value = editRole
                         GlobalProfileState.bio.value = editBio
-                        GlobalProfileState.githubLink.value = editGithub
+                        GlobalProfileState.researchGateLink.value = editResearchGate
                         GlobalProfileState.googleScholarLink.value = editScholar
                         showEditDialog = false
                     },
@@ -381,45 +381,6 @@ fun ProfileScreen(
         )
     }
 
-    if (showConnectionsDialog) {
-        AlertDialog(
-            onDismissRequest = { showConnectionsDialog = false },
-            title = { Text("Connections (24)") },
-            text = {
-                LazyColumn(modifier = Modifier.fillMaxWidth().height(200.dp)) {
-                    items(listOf("Aditya Kulkarni", "Sarah J.", "Emily Chen", "Rajesh Kumar", "Michael Smith")) { name ->
-                        Text(text = name, modifier = Modifier.padding(vertical = 8.dp), style = MaterialTheme.typography.bodyLarge)
-                        Divider()
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showConnectionsDialog = false }) {
-                    Text("Close")
-                }
-            }
-        )
-    }
-
-    if (showPapersDialog) {
-        AlertDialog(
-            onDismissRequest = { showPapersDialog = false },
-            title = { Text("Papers (5)") },
-            text = {
-                LazyColumn(modifier = Modifier.fillMaxWidth().height(200.dp)) {
-                    items(listOf("Edge AI and Computer Vision", "Distributed Systems in Healthcare", "IoT for Smart Parking", "LLMs for Code Generation", "Graph Neural Networks")) { title ->
-                        Text(text = title, modifier = Modifier.padding(vertical = 8.dp), style = MaterialTheme.typography.bodyLarge)
-                        Divider()
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showPapersDialog = false }) {
-                    Text("Close")
-                }
-            }
-        )
-    }
 }
 
 @Composable
@@ -435,32 +396,6 @@ fun ActivityTimelineItem(
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
     ) {
-        // Timeline Column
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(top = 4.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .shadow(4.dp, CircleShape, spotColor = PrimaryBlue.copy(alpha = 0.2f))
-                    .background(Color.White, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(icon, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(20.dp))
-            }
-            if (!isLast) {
-                Divider(
-                    color = PrimaryBlue.copy(alpha = 0.2f),
-                    modifier = Modifier
-                        .width(2.dp)
-                        .height(100.dp)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.width(16.dp))
-
         // Content Card
         Card(
             modifier = Modifier

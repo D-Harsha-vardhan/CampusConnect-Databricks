@@ -32,4 +32,7 @@ sealed class Screen(val route: String) {
     object Profile : Screen("profile")
     object Notifications : Screen("notifications")
     object AddPaper : Screen("add_paper")
+    object Connections : Screen("connections")
+    object PdfViewer : Screen("pdf_viewer")
+    object Insights : Screen("insights")
 }
