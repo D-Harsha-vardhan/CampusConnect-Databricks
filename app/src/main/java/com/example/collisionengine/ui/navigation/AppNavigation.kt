@@ -179,7 +179,16 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                     )
                 }
                 composable(route = Screen.Profile.route) {
-                    ProfileScreen(onNavigateBack = { navController.popBackStack() })
+                    ProfileScreen(
+                        onNavigateBack = { navController.popBackStack() },
+                        onNavigateToConnections = { navController.navigate(Screen.Connections.route) }
+                    )
+                }
+                composable(route = Screen.Connections.route) {
+                    com.example.collisionengine.ui.profile.ConnectionsScreen(
+                        onNavigateBack = { navController.popBackStack() },
+                        onNavigateToChat = { name -> navController.navigate(Screen.Chat.createRoute(name)) }
+                    )
                 }
                 composable(route = Screen.Notifications.route) {
                     NotificationsScreen(onNavigateBack = { navController.popBackStack() })
