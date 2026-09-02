@@ -161,16 +161,7 @@ object LocalDatasetClient {
             }
         }
 
-        // 3. Fallback: If no direct names matched or fewer than 2 matches, search by keywords in projects, skills, research!
-        if (matches.size < 2) {
-            val keywordMatches = searchByKeywords(query, aiResponse, matchedNamesLower)
-            for (km in keywordMatches) {
-                if (matches.none { it.name.equals(km.name, ignoreCase = true) }) {
-                    matches.add(km)
-                    if (matches.size >= 3) break
-                }
-            }
-        }
+
 
         return matches.take(4)
     }
