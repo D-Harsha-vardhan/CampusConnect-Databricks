@@ -94,18 +94,41 @@ fun ConversationScreen(
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // Google Scholar Button
-            Button(
-                onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://scholar.google.com/scholar?q=${Uri.encode(name)}"))
-                    context.startActivity(intent)
-                },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
-            ) {
-                Icon(Icons.Default.Share, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Find on Google Scholar")
+            // Connection Logic (On Top)
+            if (connectionState == "NONE") {
+                Button(
+                    onClick = { 
+                        viewModel.sendMessageToSupabase()
+                        connectionState = "SENT" 
+                    },
+                    modifier = Modifier.fillMaxWidth().height(56.dp)
+                ) {
+                    Icon(Icons.Default.Send, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Send Connect Request")
+                }
+            } else if (connectionState == "SENT") {
+                OutlinedButton(
+                    onClick = { },
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    enabled = false
+                ) {
+                    Icon(Icons.Default.Send, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Connection Sent")
+                }
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                Button(
+                    onClick = onNavigateToChat,
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.ui.graphics.Color(0xFF4CAF50))
+                ) {
+                    Icon(Icons.Default.Send, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Start Conversation")
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -130,29 +153,18 @@ fun ConversationScreen(
             
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Connection Logic
-            if (connectionState == "NONE") {
-                Button(
-                    onClick = { 
-                        viewModel.sendMessageToSupabase()
-                        connectionState = "SENT" 
-                    },
-                    modifier = Modifier.fillMaxWidth().height(56.dp)
-                ) {
-                    Icon(Icons.Default.Send, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Send Connect Request")
-                }
-            } else if (connectionState == "SENT") {
-                OutlinedButton(
-                    onClick = { },
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
-                    enabled = false
-                ) {
-                    Icon(Icons.Default.Send, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Connection Sent")
-                }
+            // Google Scholar Button
+            Button(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://scholar.google.com/scholar?q=${Uri.encode(name)}"))
+                    context.startActivity(intent)
+                },
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            ) {
+                Icon(Icons.Default.Share, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Find on Google Scholar")
             }
         }
     }
