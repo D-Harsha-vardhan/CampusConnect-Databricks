@@ -58,11 +58,75 @@ graph TD
    - Open `app/src/main/java/com/example/collisionengine/data/network/DatabricksClient.kt`
    - Paste your `DATABRICKS_HOST`, `DATABRICKS_TOKEN`, and `GENIE_SPACE_ID` into the constants at the top of the file. *(Ensure you do not commit these secrets to a public repository!)*
 
-3. **Open in Android Studio:**
+3. **Configure the Supabase Database:**
+   - Create a new project on [Supabase](https://supabase.com/).
+   - Open `app/src/main/java/com/example/collisionengine/data/network/SupabaseClient.kt`.
+   - Update `SUPABASE_URL` and `SUPABASE_KEY` with your project's credentials.
+   - Go to the **SQL Editor** in your Supabase dashboard and run the following schema to create the required tables and real-time policies:
+
+   <details>
+   <summary><b>Show SQL Setup Commands</b></summary>
+
+   ```sql
+   -- Create the messages table
+   CREATE TABLE messages (
+       id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+       connection_id TEXT NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000',
+       sender_id TEXT NOT NULL,
+       receiver_id TEXT NOT NULL DEFAULT '',
+       content TEXT NOT NULL,
+       created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+   );
+
+   -- Enable Row Level Security
+   ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+
+   -- Create policy to allow all users (Anon) to select messages
+   CREATE POLICY "Allow anonymous read" ON messages
+       FOR SELECT TO anon USING (true);
+
+   -- Create policy to allow all users (Anon) to insert messages
+   CREATE POLICY "Allow anonymous insert" ON messages
+       FOR INSERT TO anon WITH CHECK (true);
+
+   -- Enable Realtime for the messages table
+   BEGIN;
+     DROP PUBLICATION IF EXISTS supabase_realtime;
+     CREATE PUBLICATION supabase_realtime;
+   COMMIT;
+   ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+
+   -- Create the profiles table
+   CREATE TABLE profiles (
+       id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+       name TEXT UNIQUE NOT NULL,
+       role TEXT NOT NULL,
+       department TEXT,
+       year TEXT,
+       skills TEXT,
+       projects TEXT,
+       research_interests TEXT,
+       certifications TEXT,
+       career_interests TEXT,
+       expertise TEXT,
+       publications TEXT,
+       created_at TIMESTAMPTZ DEFAULT now()
+   );
+
+   -- RLS policies for profiles
+   ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+   CREATE POLICY "Allow anonymous read profiles" ON profiles FOR SELECT TO anon USING (true);
+   CREATE POLICY "Allow anonymous insert profiles" ON profiles FOR INSERT TO anon WITH CHECK (true);
+
+   ALTER PUBLICATION supabase_realtime ADD TABLE profiles;
+   ```
+   </details>
+
+4. **Open in Android Studio:**
    - Launch Android Studio and select **File -> Open**.
    - Navigate to the cloned directory and select it.
 
-4. **Sync Gradle & Run:**
+5. **Sync Gradle & Run:**
    - Click the **Sync Project with Gradle Files** icon (the little elephant).
    - Select an Android Emulator or physical device.
    - Click the green **Run 'app'** button (Shift + F10).
