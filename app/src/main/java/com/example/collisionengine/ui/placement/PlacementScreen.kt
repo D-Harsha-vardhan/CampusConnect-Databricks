@@ -138,14 +138,14 @@ fun PlacementScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Talk to Campus Connect AI",
+                                    text = "Talk to What if simulator",
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "I'm your secure, supportive placement companion. Describe your target role or company naturally. I will analyze your description to find overlapping interview prep, timelines, and study groups among your peers.",
+                                    text = "Explore your potential futures on campus. Ask me about teaming up for hackathons, choosing specializations, or finding the right mentors and projects to achieve your goals.",
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = Color.DarkGray,
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
