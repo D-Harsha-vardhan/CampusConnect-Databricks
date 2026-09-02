@@ -92,7 +92,13 @@ fun HomeScreen(
             ) {
                 SearchBar(
                     query = searchQuery,
-                    onQueryChange = { searchQuery = it }
+                    onQueryChange = { searchQuery = it },
+                    onSearch = {
+                        val matches = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByNames(listOf(searchQuery))
+                        if (matches.isNotEmpty()) {
+                            onMatchClick(matches.first())
+                        }
+                    }
                 )
             }
             

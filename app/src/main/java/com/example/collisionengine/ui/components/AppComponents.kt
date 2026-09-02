@@ -138,7 +138,8 @@ fun TopHeader(
 fun SearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSearch: () -> Unit = {}
 ) {
     TextField(
         value = query,
@@ -158,7 +159,8 @@ fun SearchBar(
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .size(40.dp)
-                    .background(PrimaryBlue, CircleShape),
+                    .background(PrimaryBlue, CircleShape)
+                    .clickable { onSearch() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(Icons.Filled.Search, contentDescription = "Search", tint = Color.White)
@@ -171,7 +173,9 @@ fun SearchBar(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
-        singleLine = true
+        singleLine = true,
+        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Search),
+        keyboardActions = androidx.compose.foundation.text.KeyboardActions(onSearch = { onSearch() })
     )
 }
 
