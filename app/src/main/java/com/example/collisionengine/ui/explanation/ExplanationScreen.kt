@@ -236,7 +236,7 @@ fun ExplanationScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Quick Action Buttons (LinkedIn & Email)
+                        // Quick Action Buttons (Google Scholar & Email)
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -245,7 +245,7 @@ fun ExplanationScreen(
                                 onClick = {
                                     val intent = Intent(
                                         Intent.ACTION_VIEW,
-                                        Uri.parse("https://www.linkedin.com/search/results/people/?keywords=${Uri.encode(name)}")
+                                        Uri.parse("https://scholar.google.com/scholar?q=${Uri.encode(name)}")
                                     )
                                     context.startActivity(intent)
                                 },
@@ -256,9 +256,9 @@ fun ExplanationScreen(
                                 border = BorderStroke(1.dp, PrimaryBlue.copy(alpha = 0.4f)),
                                 colors = ButtonDefaults.outlinedButtonColors(containerColor = PrimaryBlue.copy(alpha = 0.04f))
                             ) {
-                                Icon(Icons.Default.Share, contentDescription = "LinkedIn", tint = PrimaryBlue, modifier = Modifier.size(16.dp))
+                                Icon(Icons.Default.Share, contentDescription = "Google Scholar", tint = PrimaryBlue, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("LinkedIn", color = PrimaryBlue, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                                Text("Google Scholar", color = PrimaryBlue, fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
                             }
 
                             OutlinedButton(
