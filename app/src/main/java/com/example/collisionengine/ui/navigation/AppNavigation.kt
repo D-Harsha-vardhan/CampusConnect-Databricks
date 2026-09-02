@@ -37,7 +37,8 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
         Screen.Placement.route,
         Screen.Messages.route,
         Screen.Profile.route,
-        Screen.AddPaper.route
+        Screen.AddPaper.route,
+        Screen.Chat.route
     )
     
     val backgroundColor = com.example.collisionengine.ui.theme.BackgroundLight // Light
@@ -51,7 +52,7 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                 val navBarRoute = when (currentRoute) {
                     Screen.Home.route -> "home"
                     Screen.Research.route -> "research"
-                    Screen.Messages.route -> "messages"
+                    Screen.Messages.route, Screen.Chat.route -> "messages"
                     Screen.Profile.route -> "profile"
                     Screen.AddPaper.route -> "add_paper"
                     else -> "home"
@@ -117,6 +118,8 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                         onNavigateToResearch = { navController.navigate(Screen.Research.route) },
                         onNavigateToPlacement = { navController.navigate(Screen.Placement.route) },
                         onNavigateToNotifications = { navController.navigate(Screen.Notifications.route) },
+                        onNavigateToConnections = { navController.navigate(Screen.Connections.route) },
+                        onNavigateToPapers = { navController.navigate(Screen.PdfViewer.route) },
                         onMatchClick = { match ->
                             val reasonText = match.matchReasonText.takeIf { it.isNotBlank() } ?: "Direct search match."
                             val encodedReason = java.net.URLEncoder.encode(reasonText, "UTF-8")
@@ -196,6 +199,9 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                 }
                 composable(route = Screen.AddPaper.route) {
                     AddPaperScreen(onNavigateBack = { navController.popBackStack() })
+                }
+                composable(route = Screen.PdfViewer.route) {
+                    com.example.collisionengine.ui.pdf.PdfViewerScreen(onNavigateBack = { navController.popBackStack() })
                 }
                 
                 composable(
