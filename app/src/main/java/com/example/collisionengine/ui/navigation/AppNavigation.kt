@@ -140,13 +140,12 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                             navController.navigate(Screen.Results.createRoute("Research", query))
                         },
                         onMatchClick = { match ->
-                            val encodedReason = java.net.URLEncoder.encode(match.matchReasonText, "UTF-8")
                             navController.navigate(
                                 Screen.Explanation.createRoute(
                                     name = match.name,
                                     role = match.role,
-                                    reason = encodedReason,
-                                    score = 98 // Hardcode for now, or add to ProfileMatch
+                                    reason = match.matchReasonText,
+                                    score = 98
                                 )
                             )
                         }
@@ -161,20 +160,24 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                             navController.navigate(Screen.Results.createRoute("Placement", query))
                         },
                         onMatchClick = { match ->
-                            val encodedReason = java.net.URLEncoder.encode(match.matchReasonText, "UTF-8")
                             navController.navigate(
                                 Screen.Explanation.createRoute(
                                     name = match.name,
                                     role = match.role,
-                                    reason = encodedReason,
-                                    score = 98 // Hardcode for now
+                                    reason = match.matchReasonText,
+                                    score = 98
                                 )
                             )
                         }
                     )
                 }
                 composable(route = Screen.Messages.route) {
-                    MessagesScreen(onNavigateBack = { navController.popBackStack() })
+                    MessagesScreen(
+                        onNavigateBack = { navController.popBackStack() },
+                        onNavigateToChat = { name ->
+                            navController.navigate(Screen.Chat.createRoute(name))
+                        }
+                    )
                 }
                 composable(route = Screen.Profile.route) {
                     ProfileScreen(onNavigateBack = { navController.popBackStack() })

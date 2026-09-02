@@ -64,8 +64,15 @@ fun ResearchScreen(
                     }
                 },
                 actions = {
+<<<<<<< HEAD
                     IconButton(onClick = { ResearchViewModel.clearSession() }) {
                         Icon(Icons.Default.Delete, contentDescription = "Clear Chat", tint = Color.Gray)
+=======
+                    if (messages.isNotEmpty()) {
+                        IconButton(onClick = { viewModel.clearChat() }) {
+                            Icon(Icons.Filled.Delete, contentDescription = "Clear Chat", tint = Color.Gray)
+                        }
+>>>>>>> databricks/adithya
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

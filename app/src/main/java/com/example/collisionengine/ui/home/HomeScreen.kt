@@ -247,6 +247,7 @@ fun HomeScreen(
                         title = "Optimizing LLM Inference on Edge Devices",
                         description = "Explored techniques for quantization and distillation to run large language models on resource-constrained hardware with minimal accuracy loss.",
                         tags = listOf("AI", "Edge Computing", "LLM"),
+<<<<<<< HEAD
                         onClick = {
                             onMatchClick(
                                 com.example.collisionengine.data.model.ProfileMatch(
@@ -258,6 +259,9 @@ fun HomeScreen(
                                 )
                             )
                         }
+=======
+                        reportUrl = "https://drive.google.com/file/d/1v9d7OcYYVYjsHLAYyFd8_LqvdkwEHOgy/view?usp=drive_link"
+>>>>>>> databricks/adithya
                     )
                     
                     ResearchPaperPost(
@@ -266,6 +270,7 @@ fun HomeScreen(
                         title = "Graph Neural Networks for Social Recommendation",
                         description = "A novel approach leveraging GNNs to improve friend recommendation algorithms by analyzing complex social network topologies.",
                         tags = listOf("GNN", "Social Networks", "ML"),
+<<<<<<< HEAD
                         onClick = {
                             onMatchClick(
                                 com.example.collisionengine.data.model.ProfileMatch(
@@ -277,6 +282,9 @@ fun HomeScreen(
                                 )
                             )
                         }
+=======
+                        reportUrl = "https://drive.google.com/file/d/1vqsG5rlhJ4f2kqHTtv7lc3cH-J2zT0T6/view?usp=drive_link"
+>>>>>>> databricks/adithya
                     )
                     
                     ResearchPaperPost(
@@ -285,6 +293,7 @@ fun HomeScreen(
                         title = "Sustainable Battery Technologies",
                         description = "Reviewing the latest advancements in solid-state batteries and their potential to replace lithium-ion in the next decade.",
                         tags = listOf("Green Tech", "Hardware", "Energy"),
+<<<<<<< HEAD
                         onClick = {
                             onMatchClick(
                                 com.example.collisionengine.data.model.ProfileMatch(
@@ -296,6 +305,9 @@ fun HomeScreen(
                                 )
                             )
                         }
+=======
+                        reportUrl = "https://drive.google.com/file/d/1jjd1HKtg578rUSA1dZmH9hUJjncoOOv4/view?usp=drive_link"
+>>>>>>> databricks/adithya
                     )
                 }
             }

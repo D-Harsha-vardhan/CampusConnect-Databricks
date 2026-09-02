@@ -21,10 +21,19 @@ object SupabaseClient {
     }
     
     private fun normalizeName(name: String?): String {
-        return name?.replace("Dr. ", "", ignoreCase = true)
-            ?.replace("Prof. ", "", ignoreCase = true)
-            ?.trim()
-            ?.lowercase() ?: ""
+        if (name == null) return ""
+        return name
+            .lowercase()
+            .replace("dr.", "")
+            .replace("dr ", "")
+            .replace("prof.", "")
+            .replace("prof ", "")
+            .replace("professor", "")
+            .replace("*", "")
+            .replace("\"", "")
+            .replace("'", "")
+            .replace(Regex("""[<>]"""), "")
+            .trim()
     }
 
     suspend fun searchProfilesByNames(names: List<String>): List<com.example.collisionengine.data.model.ProfileMatch> {

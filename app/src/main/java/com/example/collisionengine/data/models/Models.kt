@@ -37,7 +37,8 @@ data class Research(
     val abstract: String? = "",
     @SerializedName("research_area") @SerialName("research_area") val researchArea: String? = "",
     val methodologies: String? = "",
-    val publication: String? = ""
+    val publication: String? = "",
+    @SerializedName("currently_working_on") @SerialName("currently_working_on") val currentlyWorkingOn: String? = ""
 )
 
 @Serializable

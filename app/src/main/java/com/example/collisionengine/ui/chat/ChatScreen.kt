@@ -1,22 +1,27 @@
 package com.example.collisionengine.ui.chat
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.collisionengine.data.models.ChatMessage
+import com.example.collisionengine.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,51 +33,146 @@ fun ChatScreen(
     val messages by viewModel.messages.collectAsState()
     var inputText by remember { mutableStateOf("") }
 
+    // Seed realistic initial greeting for peer if empty
+    val displayMessages = remember(messages, name) {
+        if (messages.isEmpty()) {
+            val initialPeerText = when {
+                name.contains("Emily", ignoreCase = true) -> "Hi! Thanks for connecting. I saw you were looking at our Edge AI inference research. How can I help?"
+                name.contains("Aarav", ignoreCase = true) -> "Hey! Thanks for reaching out. The PCB design files for the Battery Management System are ready if you want to collaborate!"
+                name.contains("Grace", ignoreCase = true) -> "Hello! I'm glad to connect. Let me know what specific questions you have about Distributed Systems."
+                name.contains("Michael", ignoreCase = true) -> "Hey there! I uploaded the Graph Neural Networks social recommendation dataset. Let me know if you need access."
+                name.contains("Sarah", ignoreCase = true) -> "Hello! Happy to exchange notes on sustainable battery technologies and solid-state materials."
+                else -> "Hi! Glad to connect on Campus Connect. Let's collaborate!"
+            }
+            listOf(ChatMessage(senderId = "peer", content = initialPeerText))
+        } else {
+            messages
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Chat with $name", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(contentAlignment = Alignment.BottomEnd) {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(PrimaryBlue.copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = name.split(" ")
+                                        .filter { it.isNotBlank() && !it.equals("Dr.", ignoreCase = true) && !it.equals("Prof.", ignoreCase = true) }
+                                        .take(2)
+                                        .mapNotNull { it.firstOrNull()?.toString() }
+                                        .joinToString("")
+                                        .ifEmpty { name.firstOrNull()?.toString() ?: "U" },
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = PrimaryBlue
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .size(11.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White)
+                                    .padding(1.5.dp)
+                                    .clip(CircleShape)
+                                    .background(VerifiedGreen)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                text = name,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = TextPrimaryLight
+                            )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(6.dp)
+                                        .clip(CircleShape)
+                                        .background(VerifiedGreen)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "Active now",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = VerifiedGreen,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimaryLight)
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {}) {
+                        Icon(Icons.Outlined.Phone, contentDescription = "Call", tint = PrimaryBlue)
+                    }
+                    IconButton(onClick = {}) {
+                        Icon(Icons.Outlined.Videocam, contentDescription = "Video Call", tint = PrimaryBlue)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         },
         bottomBar = {
-            BottomAppBar(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = Color.White,
+                shadowElevation = 8.dp
             ) {
-                OutlinedTextField(
-                    value = inputText,
-                    onValueChange = { inputText = it },
-                    modifier = Modifier.weight(1f),
-                    placeholder = { Text("Type a message...") },
-                    shape = RoundedCornerShape(24.dp),
-                    maxLines = 3
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                IconButton(
-                    onClick = {
-                        if (inputText.isNotBlank()) {
-                            viewModel.sendMessage(inputText)
-                            inputText = ""
-                        }
-                    },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    modifier = Modifier.size(48.dp)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Default.Send, contentDescription = "Send")
+                    OutlinedTextField(
+                        value = inputText,
+                        onValueChange = { inputText = it },
+                        modifier = Modifier.weight(1f),
+                        placeholder = { Text("Type a message...", color = TextSecondaryLight, fontSize = 14.sp) },
+                        shape = RoundedCornerShape(24.dp),
+                        maxLines = 4,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = Color(0xFFF1F5F9),
+                            focusedContainerColor = Color.White,
+                            unfocusedBorderColor = Color.Transparent,
+                            focusedBorderColor = PrimaryBlue
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    IconButton(
+                        onClick = {
+                            if (inputText.isNotBlank()) {
+                                viewModel.sendMessage(inputText)
+                                inputText = ""
+                            }
+                        },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = PrimaryBlue,
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.size(46.dp)
+                    ) {
+                        Icon(Icons.Default.Send, contentDescription = "Send", modifier = Modifier.size(20.dp))
+                    }
                 }
             }
-        }
+        },
+        containerColor = Color(0xFFF8F9FA)
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -82,13 +182,12 @@ fun ChatScreen(
             reverseLayout = true,
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            // Reverse the messages list because reverseLayout = true (shows bottom up)
-            items(messages.reversed()) { message ->
+            items(displayMessages.reversed()) { message ->
                 ChatBubble(
                     message = message,
                     isMine = message.senderId == viewModel.myUserId
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(10.dp))
             }
         }
     }
@@ -100,24 +199,24 @@ fun ChatBubble(message: ChatMessage, isMine: Boolean) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = if (isMine) Arrangement.End else Arrangement.Start
     ) {
-        Box(
-            modifier = Modifier
-                .background(
-                    color = if (isMine) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp,
-                        bottomStart = if (isMine) 16.dp else 4.dp,
-                        bottomEnd = if (isMine) 4.dp else 16.dp
-                    )
-                )
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-                .widthIn(max = 280.dp)
+        Surface(
+            shape = RoundedCornerShape(
+                topStart = 18.dp,
+                topEnd = 18.dp,
+                bottomStart = if (isMine) 18.dp else 4.dp,
+                bottomEnd = if (isMine) 4.dp else 18.dp
+            ),
+            color = if (isMine) PrimaryBlue else Color.White,
+            border = if (isMine) null else BorderStroke(1.dp, Color.LightGray.copy(alpha = 0.4f)),
+            shadowElevation = if (isMine) 2.dp else 1.dp,
+            modifier = Modifier.widthIn(max = 290.dp)
         ) {
             Text(
                 text = message.content,
-                color = if (isMine) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyLarge
+                color = if (isMine) Color.White else TextPrimaryLight,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                lineHeight = 20.sp
             )
         }
     }
