@@ -75,49 +75,9 @@ fun MessagesScreen(
                 role = "Student • ECE (3rd Year)",
                 lastMessage = "Hey! The PCB design for the Battery Management System is ready. Should I share the schematic files?",
                 timeAgo = "45m ago",
-                unreadCount = 2,
+                unreadCount = 1,
                 isOnline = true,
                 avatarColor = Color(0xFF00897B)
-            ),
-            ChatConversation(
-                id = "3",
-                name = "Dr. Grace Lin",
-                role = "Faculty • Electrical Eng",
-                lastMessage = "Let's schedule a 15-min call tomorrow to discuss your Distributed Systems architecture.",
-                timeAgo = "3h ago",
-                unreadCount = 0,
-                isOnline = false,
-                avatarColor = Color(0xFF7B1FA2)
-            ),
-            ChatConversation(
-                id = "4",
-                name = "Michael Ross",
-                role = "Student • Machine Learning",
-                lastMessage = "I have uploaded the social recommendation GNN dataset to the shared drive.",
-                timeAgo = "Yesterday",
-                unreadCount = 0,
-                isOnline = true,
-                avatarColor = Color(0xFFE65100)
-            ),
-            ChatConversation(
-                id = "5",
-                name = "Sarah Jenkins",
-                role = "Researcher • Energy Systems",
-                lastMessage = "Thanks for the feedback on the solid-state battery paper! Updated section 3.",
-                timeAgo = "2d ago",
-                unreadCount = 0,
-                isOnline = false,
-                avatarColor = Color(0xFF2E7D32)
-            ),
-            ChatConversation(
-                id = "6",
-                name = "Priya Agarwal",
-                role = "Student • Cloud Systems",
-                lastMessage = "Can you review my pull request for the collision detection backend?",
-                timeAgo = "3d ago",
-                unreadCount = 0,
-                isOnline = true,
-                avatarColor = Color(0xFF0288D1)
             )
         )
     }
@@ -146,7 +106,7 @@ fun MessagesScreen(
                             color = PrimaryBlue
                         ) {
                             Text(
-                                text = "3",
+                                text = "2",
                                 modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
@@ -167,17 +127,6 @@ fun MessagesScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
-        },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { showNewChatDialog = true },
-                icon = { Icon(Icons.Default.Edit, contentDescription = "New Chat", tint = Color.White) },
-                text = { Text("New Message", fontWeight = FontWeight.Bold, color = Color.White) },
-                containerColor = PrimaryBlue,
-                elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp),
-                shape = RoundedCornerShape(16.dp)
-            )
-        },
         containerColor = Color(0xFFF8F9FA)
     ) { innerPadding ->
         LazyColumn(
@@ -186,38 +135,7 @@ fun MessagesScreen(
                 .padding(innerPadding),
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
-            // Search Bar
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White)
-                        .padding(horizontal = 20.dp, vertical = 10.dp)
-                ) {
-                    OutlinedTextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Search messages, peers, or faculty...", color = TextSecondaryLight, fontSize = 14.sp) },
-                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = TextSecondaryLight) },
-                        trailingIcon = {
-                            if (searchQuery.isNotBlank()) {
-                                IconButton(onClick = { searchQuery = "" }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Clear", tint = TextSecondaryLight)
-                                }
-                            }
-                        },
-                        shape = RoundedCornerShape(16.dp),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedContainerColor = Color(0xFFF1F5F9),
-                            focusedContainerColor = Color.White,
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedBorderColor = PrimaryBlue
-                        )
-                    )
-                }
-            }
+
 
             // Active Connections Story Row
             item {
@@ -284,7 +202,7 @@ fun MessagesScreen(
                                 }
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = name.split(" ").firstOrNull() ?: name,
+                                    text = if (name.startsWith("Dr.")) name.split(" ").take(2).joinToString(" ") else name.split(" ").firstOrNull() ?: name,
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Medium,
                                     maxLines = 1,
