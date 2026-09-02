@@ -53,6 +53,7 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                     Screen.Research.route -> "research"
                     Screen.Messages.route -> "messages"
                     Screen.Profile.route -> "profile"
+                    Screen.AddPaper.route -> "add_paper"
                     else -> "home"
                 }
                 CustomBottomNavBar(
