@@ -43,6 +43,7 @@ fun HomeScreen(
     onMatchClick: (com.example.collisionengine.data.model.ProfileMatch) -> Unit = {}
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    var searchResults by remember { mutableStateOf<List<com.example.collisionengine.data.model.ProfileMatch>>(emptyList()) }
     var selectedCategory by remember { mutableStateOf("All Collisions") }
     var isPlacementLiked by remember { mutableStateOf(false) }
     
@@ -88,21 +89,73 @@ fun HomeScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // 2. Search
             androidx.compose.animation.AnimatedVisibility(
                 visible = isVisible,
                 enter = androidx.compose.animation.slideInVertically(initialOffsetY = { 50 }, animationSpec = androidx.compose.animation.core.tween(300, delayMillis = 100)) + androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(300, delayMillis = 100))
             ) {
-                SearchBar(
-                    query = searchQuery,
-                    onQueryChange = { searchQuery = it },
-                    onSearch = {
-                        val matches = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByNames(listOf(searchQuery))
-                        if (matches.isNotEmpty()) {
-                            onMatchClick(matches.first())
+                Column {
+                    SearchBar(
+                        query = searchQuery,
+                        onQueryChange = { 
+                            searchQuery = it 
+                            if (it.length >= 2) {
+                                searchResults = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByNames(listOf(it))
+                            } else {
+                                searchResults = emptyList()
+                            }
+                        },
+                        onSearch = {
+                            if (searchResults.isNotEmpty()) {
+                                onMatchClick(searchResults.first())
+                            }
+                        }
+                    )
+                    
+                    if (searchResults.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                                searchResults.take(5).forEach { match ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable { 
+                                                onMatchClick(match)
+                                                searchQuery = ""
+                                                searchResults = emptyList()
+                                            }
+                                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                                .background(PrimaryBlue.copy(alpha = 0.1f), CircleShape),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(Icons.Filled.Person, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(20.dp))
+                                        }
+                                        Spacer(modifier = Modifier.width(16.dp))
+                                        Column {
+                                            Text(match.name, fontWeight = FontWeight.SemiBold, color = TextPrimaryLight)
+                                            Text(match.role, fontSize = 12.sp, color = TextSecondaryLight)
+                                        }
+                                    }
+                                    if (match != searchResults.take(5).last()) {
+                                        androidx.compose.material3.HorizontalDivider(color = Color.LightGray.copy(alpha = 0.3f), modifier = Modifier.padding(horizontal = 16.dp))
+                                    }
+                                }
+                            }
                         }
                     }
-                )
+                }
             }
             
             Spacer(modifier = Modifier.height(32.dp))
