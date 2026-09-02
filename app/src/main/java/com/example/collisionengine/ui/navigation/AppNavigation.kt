@@ -48,7 +48,21 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
     Scaffold(
         containerColor = backgroundColor,
         bottomBar = {
-            if (showBottomNav && !isKeyboardOpen) {
+            androidx.compose.animation.AnimatedVisibility(
+                visible = showBottomNav && !isKeyboardOpen,
+                enter = androidx.compose.animation.slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = androidx.compose.animation.core.tween(500, delayMillis = 500)
+                ) + androidx.compose.animation.fadeIn(
+                    animationSpec = androidx.compose.animation.core.tween(500, delayMillis = 500)
+                ),
+                exit = androidx.compose.animation.slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = androidx.compose.animation.core.tween(300)
+                ) + androidx.compose.animation.fadeOut(
+                    animationSpec = androidx.compose.animation.core.tween(300)
+                )
+            ) {
                 val navBarRoute = when (currentRoute) {
                     Screen.Home.route -> "home"
                     Screen.Research.route -> "research"
