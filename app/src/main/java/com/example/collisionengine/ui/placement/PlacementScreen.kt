@@ -58,25 +58,25 @@ fun PlacementScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("What if simulator", color = Color.White) },
+                title = { Text("What if simulator", color = com.example.collisionengine.ui.theme.TextPrimaryLight) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = com.example.collisionengine.ui.theme.TextPrimaryLight)
                     }
                 },
                 actions = {
                     if (messages.isNotEmpty()) {
                         IconButton(onClick = { viewModel.clearChat() }) {
-                            Icon(Icons.Filled.Delete, contentDescription = "Clear Chat", tint = Color.LightGray)
+                            Icon(Icons.Filled.Delete, contentDescription = "Clear Chat", tint = com.example.collisionengine.ui.theme.TextSecondaryLight)
                         }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF0F172A)
+                    containerColor = Color.White
                 )
             )
         },
-        containerColor = Color(0xFF0F172A) // Dark background for the AI vibe
+        containerColor = com.example.collisionengine.ui.theme.BackgroundLight
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -203,7 +203,7 @@ fun PlacementScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFF1E293B))
+                    .background(Color.White)
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = if (isKeyboardOpen) 16.dp else 90.dp)
                     .imePadding()
             ) {
@@ -227,15 +227,15 @@ fun PlacementScreen(
                     placeholder = {
                         Text(
                             "Type your placement goals...",
-                            color = Color.White.copy(alpha = 0.5f)
+                            color = com.example.collisionengine.ui.theme.TextSecondaryLight
                         )
                     },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.White),
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = com.example.collisionengine.ui.theme.TextPrimaryLight),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PrimaryBlue,
                         unfocusedBorderColor = Color.Transparent,
-                        focusedContainerColor = Color(0xFF0F172A),
-                        unfocusedContainerColor = Color(0xFF0F172A)
+                        focusedContainerColor = Color(0xFFF1F5F9),
+                        unfocusedContainerColor = Color(0xFFF1F5F9)
                     ),
                     shape = RoundedCornerShape(24.dp),
                     trailingIcon = {
@@ -246,7 +246,7 @@ fun PlacementScreen(
                             Icon(
                                 Icons.Default.Send,
                                 contentDescription = "Send",
-                                tint = if (queryText.isNotBlank()) PrimaryBlue else Color.White.copy(alpha = 0.3f)
+                                tint = if (queryText.isNotBlank()) PrimaryBlue else Color(0xFFCBD5E1)
                             )
                         }
                     }

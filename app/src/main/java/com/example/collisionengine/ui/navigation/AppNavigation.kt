@@ -34,14 +34,12 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
     val showBottomNav = currentRoute in listOf(
         Screen.Home.route,
         Screen.Research.route,
+        Screen.Placement.route,
         Screen.Messages.route,
         Screen.Profile.route
     )
     
-    val backgroundColor = when (currentRoute) {
-        Screen.Placement.route -> androidx.compose.ui.graphics.Color(0xFF0F172A) // Dark
-        else -> com.example.collisionengine.ui.theme.BackgroundLight // Light
-    }
+    val backgroundColor = com.example.collisionengine.ui.theme.BackgroundLight // Light
 
     val imeBottom = WindowInsets.ime.getBottom(LocalDensity.current)
     val isKeyboardOpen = imeBottom > 0
