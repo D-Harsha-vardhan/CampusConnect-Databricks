@@ -50,8 +50,6 @@ fun ProfileScreen(
     val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
 
     var showEditDialog by remember { mutableStateOf(false) }
-    var showConnectionsDialog by remember { mutableStateOf(false) }
-    var showPapersDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -234,7 +232,7 @@ fun ProfileScreen(
                             .width(1.dp),
                         color = BackgroundLight
                     )
-                    Box(modifier = Modifier.clickable { showPapersDialog = true }) {
+                    Box {
                         ProfileStat(count = "5", label = "Papers")
                     }
                     Divider(
@@ -304,7 +302,7 @@ fun ProfileScreen(
         var editName by remember { mutableStateOf(userName) }
         var editRole by remember { mutableStateOf(userRole) }
         var editBio by remember { mutableStateOf(userBio) }
-        var editGithub by remember { mutableStateOf(githubLink) }
+        var editResearchGate by remember { mutableStateOf(researchGateLink) }
         var editScholar by remember { mutableStateOf(googleScholarLink) }
         
         AlertDialog(
@@ -344,8 +342,8 @@ fun ProfileScreen(
                         shape = RoundedCornerShape(12.dp)
                     )
                     OutlinedTextField(
-                        value = editGithub,
-                        onValueChange = { editGithub = it },
+                        value = editResearchGate,
+                        onValueChange = { editResearchGate = it },
                         label = { Text("ResearchGate Link") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp)
@@ -365,7 +363,7 @@ fun ProfileScreen(
                         GlobalProfileState.name.value = editName
                         GlobalProfileState.role.value = editRole
                         GlobalProfileState.bio.value = editBio
-                        GlobalProfileState.researchGateLink.value = editGithub
+                        GlobalProfileState.researchGateLink.value = editResearchGate
                         GlobalProfileState.googleScholarLink.value = editScholar
                         showEditDialog = false
                     },
@@ -383,45 +381,6 @@ fun ProfileScreen(
         )
     }
 
-    if (showConnectionsDialog) {
-        AlertDialog(
-            onDismissRequest = { showConnectionsDialog = false },
-            title = { Text("Connections (24)") },
-            text = {
-                LazyColumn(modifier = Modifier.fillMaxWidth().height(200.dp)) {
-                    items(listOf("Aditya Kulkarni", "Sarah J.", "Emily Chen", "Rajesh Kumar", "Michael Smith")) { name ->
-                        Text(text = name, modifier = Modifier.padding(vertical = 8.dp), style = MaterialTheme.typography.bodyLarge)
-                        Divider()
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showConnectionsDialog = false }) {
-                    Text("Close")
-                }
-            }
-        )
-    }
-
-    if (showPapersDialog) {
-        AlertDialog(
-            onDismissRequest = { showPapersDialog = false },
-            title = { Text("Papers (5)") },
-            text = {
-                LazyColumn(modifier = Modifier.fillMaxWidth().height(200.dp)) {
-                    items(listOf("Edge AI and Computer Vision", "Distributed Systems in Healthcare", "IoT for Smart Parking", "LLMs for Code Generation", "Graph Neural Networks")) { title ->
-                        Text(text = title, modifier = Modifier.padding(vertical = 8.dp), style = MaterialTheme.typography.bodyLarge)
-                        Divider()
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showPapersDialog = false }) {
-                    Text("Close")
-                }
-            }
-        )
-    }
 }
 
 @Composable

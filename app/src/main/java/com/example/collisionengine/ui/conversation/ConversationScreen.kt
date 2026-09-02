@@ -94,10 +94,10 @@ fun ConversationScreen(
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // LinkedIn Button
+            // Google Scholar Button
             Button(
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/search/results/people/?keywords=${Uri.encode(name)}"))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://scholar.google.com/scholar?q=${Uri.encode(name)}"))
                     context.startActivity(intent)
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
@@ -105,7 +105,7 @@ fun ConversationScreen(
             ) {
                 Icon(Icons.Default.Share, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Find on LinkedIn")
+                Text("Find on Google Scholar")
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -135,7 +135,7 @@ fun ConversationScreen(
                 Button(
                     onClick = { 
                         viewModel.sendMessageToSupabase()
-                        connectionState = "PENDING" 
+                        connectionState = "SENT" 
                     },
                     modifier = Modifier.fillMaxWidth().height(56.dp)
                 ) {
@@ -143,29 +143,15 @@ fun ConversationScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Send Connect Request")
                 }
-            } else if (connectionState == "PENDING") {
-                LaunchedEffect(Unit) {
-                    delay(2000) // Simulate other user accepting
-                    connectionState = "ACCEPTED"
-                }
+            } else if (connectionState == "SENT") {
                 OutlinedButton(
                     onClick = { },
                     modifier = Modifier.fillMaxWidth().height(56.dp),
                     enabled = false
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Request Pending...")
-                }
-            } else if (connectionState == "ACCEPTED") {
-                Button(
-                    onClick = onNavigateToChat,
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.ui.graphics.Color(0xFF4CAF50))
-                ) {
                     Icon(Icons.Default.Send, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Request Accepted! Open Chat")
+                    Text("Connection Sent")
                 }
             }
         }
