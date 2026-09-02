@@ -36,7 +36,8 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
         Screen.Research.route,
         Screen.Placement.route,
         Screen.Messages.route,
-        Screen.Profile.route
+        Screen.Profile.route,
+        Screen.AddPaper.route
     )
     
     val backgroundColor = com.example.collisionengine.ui.theme.BackgroundLight // Light

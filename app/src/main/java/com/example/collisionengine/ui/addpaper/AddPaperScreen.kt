@@ -11,6 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.collisionengine.ui.theme.BackgroundLight
 import com.example.collisionengine.ui.theme.PrimaryBlue
+import com.example.collisionengine.ui.theme.TextPrimaryLight
+import com.example.collisionengine.ui.theme.TextSecondaryLight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,14 +45,60 @@ fun AddPaperScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             var title by remember { mutableStateOf("") }
+            var authors by remember { mutableStateOf("") }
+            var tags by remember { mutableStateOf("") }
             var description by remember { mutableStateOf("") }
             
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Research paper title:") },
+                placeholder = { Text("Research paper title", color = TextSecondaryLight) },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimaryLight),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = PrimaryBlue,
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedContainerColor = Color(0xFFF1F5F9),
+                    unfocusedContainerColor = Color(0xFFF1F5F9)
+                ),
+                shape = RoundedCornerShape(24.dp)
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = authors,
+                onValueChange = { authors = it },
+                placeholder = { Text("Authors (comma separated)", color = TextSecondaryLight) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimaryLight),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = PrimaryBlue,
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedContainerColor = Color(0xFFF1F5F9),
+                    unfocusedContainerColor = Color(0xFFF1F5F9)
+                ),
+                shape = RoundedCornerShape(24.dp)
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = tags,
+                onValueChange = { tags = it },
+                placeholder = { Text("Tags/Keywords (comma separated)", color = TextSecondaryLight) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimaryLight),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = PrimaryBlue,
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedContainerColor = Color(0xFFF1F5F9),
+                    unfocusedContainerColor = Color(0xFFF1F5F9)
+                ),
+                shape = RoundedCornerShape(24.dp)
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -56,9 +106,17 @@ fun AddPaperScreen(
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
-                label = { Text("Description of the research paper:") },
+                placeholder = { Text("Description of the research paper", color = TextSecondaryLight) },
                 modifier = Modifier.fillMaxWidth().height(120.dp),
-                maxLines = 5
+                maxLines = 5,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimaryLight),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = PrimaryBlue,
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedContainerColor = Color(0xFFF1F5F9),
+                    unfocusedContainerColor = Color(0xFFF1F5F9)
+                ),
+                shape = RoundedCornerShape(24.dp)
             )
             
             Spacer(modifier = Modifier.height(32.dp))
@@ -68,11 +126,12 @@ fun AddPaperScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
+                shape = RoundedCornerShape(24.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
             ) {
-                Icon(Icons.Default.UploadFile, contentDescription = "Upload")
+                Icon(Icons.Default.UploadFile, contentDescription = "Upload", tint = Color.White)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Upload Research Paper from Files")
+                Text("Upload Research Paper from Files", color = Color.White, style = MaterialTheme.typography.titleMedium, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
             }
         }
     }
