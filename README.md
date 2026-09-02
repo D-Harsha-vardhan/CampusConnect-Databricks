@@ -1,15 +1,15 @@
-# Campus Connect AI (Clover Dynamics)
+# Campus Connect AI
 
-A native Android application designed to facilitate campus discovery. Instead of acting like a traditional chatbot, Campus Connect helps students find peers and faculty who have solved similar problems in research or placement contexts. 
+A native Android application designed to facilitate campus discovery and intelligent networking. Campus Connect helps students find peers and faculty who have solved similar problems in research or placement contexts, acting as a personal university matchmaker.
 
-By analyzing overlapping attributes (skills, methodologies, company interviews, domains) using Nvidia's Nemotron AI, the app intelligently extracts candidates and cross-references them against an embedded offline dataset to give you rich, beautiful profile cards of exactly the right people on campus.
+By analyzing overlapping attributes (skills, methodologies, company interviews, domains) using **Databricks Genie AI**, the app intelligently extracts candidates and cross-references them against an embedded offline dataset to give you rich, beautiful profile cards of exactly the right people on campus.
 
 ## 🌟 Key Features
 - **Research Collisions:** Search for overlapping research topics, hardware (e.g., Raspberry Pi), and AI domains.
 - **Placement Collisions:** Find seniors or peers who have interviewed at your target companies for specific roles.
-- **Nvidia Nemotron LLM:** Powered by `nvidia/nemotron-3.5-lightning-30b-a3b` for fast, intelligent reasoning and entity extraction.
+- **Databricks Genie AI:** Powered by Databricks for fast, intelligent reasoning and entity extraction.
 - **Offline Dataset Matching:** Lightning-fast profile matching using bundled `Students.json` and `Faculty.json` datasets inside the app.
-- **Glassmorphic UI:** A premium, modern dark-themed profile UI built in Jetpack Compose.
+- **Glassmorphic UI:** A premium, modern dark-themed profile UI built in Jetpack Compose, complete with clickable social links.
 
 ---
 
@@ -21,7 +21,7 @@ graph TD
     B -->|Research| C[Enter Research Query]
     B -->|Placement| D[Enter Placement Query]
     
-    C --> E[Nvidia Nemotron API]
+    C --> E[Databricks Genie AI API]
     D --> E
     
     E -->|Extracts Names| F[LocalDatasetClient]
@@ -31,10 +31,7 @@ graph TD
     H --> I[List of Match Cards]
     
     I -->|Tap Profile| J[Profile Details Screen]
-    J --> K[View Skills, Projects & Match Score]
-    
-    K -->|Tap Connect| L[AI Drafts Intro Message]
-    L --> M[In-App Chat]
+    J --> K[View Skills, Projects & Social Links]
 ```
 
 ---
@@ -53,13 +50,13 @@ graph TD
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/D-Harsha-vardhan/CampusConnect--CloverDynamics.git
-   cd CampusConnect--CloverDynamics
+   git clone https://github.com/D-Harsha-vardhan/CampusConnect-Databricks.git
+   cd CampusConnect-Databricks
    ```
 
-2. **Configure the Nvidia API Key:**
-   - Open `app/src/main/java/com/example/collisionengine/data/network/NvidiaClient.kt`
-   - Paste your Nvidia API key into the `NVIDIA_API_KEY` constant on Line 13.
+2. **Configure the Databricks API Key:**
+   - Open `app/src/main/java/com/example/collisionengine/data/network/DatabricksClient.kt`
+   - Paste your `DATABRICKS_HOST`, `DATABRICKS_TOKEN`, and `GENIE_SPACE_ID` into the constants at the top of the file. *(Ensure you do not commit these secrets to a public repository!)*
 
 3. **Open in Android Studio:**
    - Launch Android Studio and select **File -> Open**.
@@ -69,4 +66,3 @@ graph TD
    - Click the **Sync Project with Gradle Files** icon (the little elephant).
    - Select an Android Emulator or physical device.
    - Click the green **Run 'app'** button (Shift + F10).
-

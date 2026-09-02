@@ -10,9 +10,9 @@ import java.net.URL
 
 object DatabricksClient {
     // Credentials from backend campus/.env
-    private const val HOST = "https://dbc-d4fdaac8-e4fd.cloud.databricks.com"
-    private const val TOKEN = "YOUR_DATABRICKS_PAT_HERE" // TODO: Add your new token here
-    private const val SPACE_ID = "01f1a511d4491c78a550a4ece2546db8"
+    private const val HOST = "YOUR_DATABRICKS_HOST_HERE"
+    private const val TOKEN = "YOUR_DATABRICKS_PAT_HERE"
+    private const val SPACE_ID = "YOUR_DATABRICKS_SPACE_ID_HERE"
 
     suspend fun askGenie(question: String): String = withContext(Dispatchers.IO) {
         try {
