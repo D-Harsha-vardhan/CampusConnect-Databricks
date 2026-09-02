@@ -160,7 +160,12 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                     )
                 }
                 composable(route = Screen.Messages.route) {
-                    MessagesScreen(onNavigateBack = { navController.popBackStack() })
+                    MessagesScreen(
+                        onNavigateBack = { navController.popBackStack() },
+                        onNavigateToChat = { name ->
+                            navController.navigate(Screen.Chat.createRoute(name))
+                        }
+                    )
                 }
                 composable(route = Screen.Profile.route) {
                     ProfileScreen(onNavigateBack = { navController.popBackStack() })
