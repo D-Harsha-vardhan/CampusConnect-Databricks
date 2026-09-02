@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.collisionengine.ui.theme.BackgroundLight
 import com.example.collisionengine.ui.theme.TextPrimaryLight
 
@@ -114,7 +115,7 @@ fun PdfSection(title: String, content: String) {
             text = content,
             style = MaterialTheme.typography.bodyLarge,
             color = TextPrimaryLight,
-            lineHeight = 24.androidx.compose.ui.unit.sp
+            lineHeight = 24.sp
         )
     }
 }
