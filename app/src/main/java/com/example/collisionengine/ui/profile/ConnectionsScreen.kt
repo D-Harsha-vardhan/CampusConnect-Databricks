@@ -30,14 +30,14 @@ fun ConnectionsScreen(
     onNavigateToChat: (String) -> Unit
 ) {
     val connections = listOf(
-        "Aditya Kulkarni",
-        "Sarah J.",
-        "Emily Chen",
-        "Rajesh Kumar",
-        "Michael Smith",
-        "Priya Patel",
-        "David Wong",
-        "Elena Rodriguez"
+        Pair("Aditya Kulkarni", "Student"),
+        Pair("Sarah J.", "Student"),
+        Pair("Emily Chen", "Faculty"),
+        Pair("Rajesh Kumar", "Faculty"),
+        Pair("Michael Smith", "Student"),
+        Pair("Priya Patel", "Student"),
+        Pair("David Wong", "Faculty"),
+        Pair("Elena Rodriguez", "Student")
     )
 
     Scaffold(
@@ -64,9 +64,10 @@ fun ConnectionsScreen(
                 .padding(horizontal = 16.dp),
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            items(connections) { name ->
+            items(connections) { (name, role) ->
                 ConnectionItem(
                     name = name,
+                    role = role,
                     onMessageClick = { onNavigateToChat(name) }
                 )
                 Divider(color = Color.LightGray.copy(alpha = 0.5f))
@@ -78,6 +79,7 @@ fun ConnectionsScreen(
 @Composable
 fun ConnectionItem(
     name: String,
+    role: String,
     onMessageClick: () -> Unit
 ) {
     Row(
@@ -109,7 +111,7 @@ fun ConnectionItem(
                 color = TextPrimaryLight
             )
             Text(
-                text = "Connection",
+                text = role,
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondaryLight
             )
