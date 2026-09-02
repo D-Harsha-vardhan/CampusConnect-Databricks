@@ -39,6 +39,7 @@ fun HomeScreen(
     onNavigateToNotifications: () -> Unit,
     onNavigateToConnections: () -> Unit,
     onNavigateToPapers: () -> Unit,
+    onNavigateToInsights: () -> Unit,
     onMatchClick: (com.example.collisionengine.data.model.ProfileMatch) -> Unit = {}
 ) {
     var searchQuery by remember { mutableStateOf("") }
@@ -128,13 +129,13 @@ fun HomeScreen(
                             QuickActionCard(icon = Icons.Filled.Group, label = "Peers", onClick = onNavigateToConnections)
                         }
                         item {
-                            QuickActionCard(icon = Icons.Filled.MenuBook, label = "Papers", onClick = onNavigateToPapers)
+                            QuickActionCard(icon = Icons.Filled.MenuBook, label = "Guide", onClick = onNavigateToPapers)
                         }
                         item {
                             QuickActionCard(icon = Icons.Filled.HelpOutline, label = "What if ?", onClick = onNavigateToPlacement)
                         }
                         item {
-                            QuickActionCard(icon = Icons.Filled.Event, label = "Insights", onClick = {})
+                            QuickActionCard(icon = Icons.Filled.Event, label = "Insights", onClick = onNavigateToInsights)
                         }
                     }
                 }

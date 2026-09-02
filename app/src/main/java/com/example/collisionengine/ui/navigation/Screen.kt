@@ -34,4 +34,5 @@ sealed class Screen(val route: String) {
     object AddPaper : Screen("add_paper")
     object Connections : Screen("connections")
     object PdfViewer : Screen("pdf_viewer")
+    object Insights : Screen("insights")
 }

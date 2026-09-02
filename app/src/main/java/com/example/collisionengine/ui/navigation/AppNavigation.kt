@@ -120,6 +120,7 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                         onNavigateToNotifications = { navController.navigate(Screen.Notifications.route) },
                         onNavigateToConnections = { navController.navigate(Screen.Connections.route) },
                         onNavigateToPapers = { navController.navigate(Screen.PdfViewer.route) },
+                        onNavigateToInsights = { navController.navigate(Screen.Insights.route) },
                         onMatchClick = { match ->
                             val reasonText = match.matchReasonText.takeIf { it.isNotBlank() } ?: "Direct search match."
                             val encodedReason = java.net.URLEncoder.encode(reasonText, "UTF-8")
@@ -202,6 +203,9 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                 }
                 composable(route = Screen.PdfViewer.route) {
                     com.example.collisionengine.ui.pdf.PdfViewerScreen(onNavigateBack = { navController.popBackStack() })
+                }
+                composable(route = Screen.Insights.route) {
+                    com.example.collisionengine.ui.insights.InsightsScreen(onNavigateBack = { navController.popBackStack() })
                 }
                 
                 composable(
