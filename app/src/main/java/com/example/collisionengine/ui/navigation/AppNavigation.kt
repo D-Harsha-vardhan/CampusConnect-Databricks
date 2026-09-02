@@ -40,7 +40,8 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
         Screen.Placement.route,
         Screen.Messages.route,
         Screen.Profile.route,
-        Screen.AddPaper.route
+        Screen.AddPaper.route,
+        Screen.Chat.route
     )
     
     val backgroundColor = com.example.collisionengine.ui.theme.BackgroundLight // Light
@@ -50,12 +51,27 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
     Scaffold(
         containerColor = backgroundColor,
         bottomBar = {
-            if (showBottomNav && !isKeyboardOpen) {
+            androidx.compose.animation.AnimatedVisibility(
+                visible = showBottomNav && !isKeyboardOpen,
+                enter = androidx.compose.animation.slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = androidx.compose.animation.core.tween(500, delayMillis = 500)
+                ) + androidx.compose.animation.fadeIn(
+                    animationSpec = androidx.compose.animation.core.tween(500, delayMillis = 500)
+                ),
+                exit = androidx.compose.animation.slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = androidx.compose.animation.core.tween(300)
+                ) + androidx.compose.animation.fadeOut(
+                    animationSpec = androidx.compose.animation.core.tween(300)
+                )
+            ) {
                 val navBarRoute = when (currentRoute) {
                     Screen.Home.route -> "home"
                     Screen.Research.route -> "research"
-                    Screen.Messages.route -> "messages"
+                    Screen.Messages.route, Screen.Chat.route -> "messages"
                     Screen.Profile.route -> "profile"
+                    Screen.AddPaper.route -> "add_paper"
                     else -> "home"
                 }
                 CustomBottomNavBar(
@@ -132,6 +148,9 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                         onNavigateToResearch = { query -> navController.navigate(Screen.Research.createRoute(query)) },
                         onNavigateToPlacement = { navController.navigate(Screen.Placement.route) },
                         onNavigateToNotifications = { navController.navigate(Screen.Notifications.route) },
+                        onNavigateToConnections = { navController.navigate(Screen.Connections.route) },
+                        onNavigateToPapers = { navController.navigate(Screen.PdfViewer.route) },
+                        onNavigateToInsights = { navController.navigate(Screen.Insights.route) },
                         onMatchClick = { match ->
                             val reasonText = match.matchReasonText.takeIf { it.isNotBlank() } ?: "Direct search match."
                             val encodedReason = java.net.URLEncoder.encode(reasonText, "UTF-8")
@@ -218,6 +237,12 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                 }
                 composable(route = Screen.AddPaper.route) {
                     AddPaperScreen(onNavigateBack = { navController.popBackStack() })
+                }
+                composable(route = Screen.PdfViewer.route) {
+                    com.example.collisionengine.ui.pdf.PdfViewerScreen(onNavigateBack = { navController.popBackStack() })
+                }
+                composable(route = Screen.Insights.route) {
+                    com.example.collisionengine.ui.insights.InsightsScreen(onNavigateBack = { navController.popBackStack() })
                 }
                 
                 composable(

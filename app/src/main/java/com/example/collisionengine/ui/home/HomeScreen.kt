@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.clickable
@@ -40,6 +41,9 @@ fun HomeScreen(
     onNavigateToResearch: (String?) -> Unit,
     onNavigateToPlacement: () -> Unit,
     onNavigateToNotifications: () -> Unit,
+    onNavigateToConnections: () -> Unit,
+    onNavigateToPapers: () -> Unit,
+    onNavigateToInsights: () -> Unit,
     onMatchClick: (com.example.collisionengine.data.model.ProfileMatch) -> Unit = {}
 ) {
     var searchQuery by remember { mutableStateOf("") }
@@ -106,7 +110,6 @@ fun HomeScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // 2. Search
             androidx.compose.animation.AnimatedVisibility(
                 visible = isVisible,
                 enter = androidx.compose.animation.slideInVertically(initialOffsetY = { 50 }, animationSpec = androidx.compose.animation.core.tween(300, delayMillis = 100)) + androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(300, delayMillis = 100))
@@ -186,7 +189,7 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         item {
-                            QuickActionCard(icon = Icons.Filled.Group, label = "Peers", onClick = {})
+                            QuickActionCard(icon = Icons.Filled.Group, label = "Peers", onClick = onNavigateToConnections)
                         }
                         item {
                             QuickActionCard(icon = Icons.Filled.MenuBook, label = "Papers", onClick = { onNavigateToResearch(null) })
@@ -195,7 +198,7 @@ fun HomeScreen(
                             QuickActionCard(icon = Icons.Filled.HelpOutline, label = "What if ?", onClick = onNavigateToPlacement)
                         }
                         item {
-                            QuickActionCard(icon = Icons.Filled.Event, label = "Insights", onClick = {})
+                            QuickActionCard(icon = Icons.Filled.Event, label = "Insights", onClick = onNavigateToInsights)
                         }
                     }
                 }
