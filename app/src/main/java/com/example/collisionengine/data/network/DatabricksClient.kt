@@ -24,7 +24,8 @@ object DatabricksClient {
             startConn.setRequestProperty("Content-Type", "application/json")
             startConn.doOutput = true
 
-            val startPayload = JSONObject().put("content", question)
+            val systemContext = "\n\n(System Context: You are the Campus Connect AI. If the user asks to compare skills, find someone working on a specific app/project, or suggest team members, you MUST query the students and faculty tables to find individuals with matching skills, research interests, or projects. Provide a detailed comparison and recommend the best individuals for their team.)"
+            val startPayload = JSONObject().put("content", question + systemContext)
             OutputStreamWriter(startConn.outputStream).use { it.write(startPayload.toString()) }
 
             if (startConn.responseCode !in 200..299) {
