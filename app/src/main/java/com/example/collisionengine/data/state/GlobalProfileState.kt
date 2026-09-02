@@ -23,6 +23,7 @@ object GlobalProfileState {
     val skills = MutableStateFlow("")
     val bio = MutableStateFlow("")
     val githubLink = MutableStateFlow("https://github.com/")
+    val researchGateLink = MutableStateFlow("https://www.researchgate.net/")
     val googleScholarLink = MutableStateFlow("https://scholar.google.com/")
 
     fun init(context: Context) {

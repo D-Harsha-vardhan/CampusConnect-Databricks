@@ -35,7 +35,10 @@ class ConversationViewModel : ViewModel() {
             .take(2)
             .joinToString(" and ")
 
-        val topicPhrase = if (topTopics.isNotBlank()) topTopics else decodedReason.take(50)
+        var topicPhrase = if (topTopics.isNotBlank()) topTopics else decodedReason.take(50)
+        if (topicPhrase.equals("None", ignoreCase = true) || topicPhrase.equals("Direct search match.", ignoreCase = true)) {
+            topicPhrase = "your field"
+        }
 
         val msg = "Hi $greeting,\n\nI came across your profile on Campus Connect regarding your work in $topicPhrase. I'm currently working on a related project and would love to connect, ask a quick question, and exchange insights!"
         _suggestedMessage.value = msg

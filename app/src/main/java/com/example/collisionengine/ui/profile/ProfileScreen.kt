@@ -36,6 +36,7 @@ import androidx.compose.foundation.lazy.items
 @Composable
 fun ProfileScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToConnections: () -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
     var isLiked1 by remember { mutableStateOf(true) }
