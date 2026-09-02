@@ -9,7 +9,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object DatabricksClient {
-    // Credentials from backend campus/.env
+    // Credentials placeholder (set your Databricks Genie Agent credentials here or in backend campus/.env)
     private const val HOST = "YOUR_DATABRICKS_HOST_HERE"
     private const val TOKEN = "YOUR_DATABRICKS_PAT_HERE"
     private const val SPACE_ID = "YOUR_DATABRICKS_SPACE_ID_HERE"
