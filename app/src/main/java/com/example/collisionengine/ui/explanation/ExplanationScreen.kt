@@ -1,8 +1,14 @@
 package com.example.collisionengine.ui.explanation
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
@@ -14,8 +20,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.collisionengine.data.network.LocalDatasetClient
+import com.example.collisionengine.ui.theme.BackgroundLight
+import com.example.collisionengine.ui.theme.PrimaryBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,46 +38,67 @@ fun ExplanationScreen(
     onNavigateBack: () -> Unit,
     onStartConversation: () -> Unit
 ) {
+    val context = LocalContext.current
+    
+    // Lookup the full profile from the dataset
+    val studentProfile = LocalDatasetClient.getStudentByName(name)
+    val facultyProfile = LocalDatasetClient.getFacultyByName(name)
+    
+    val decodedReason = try {
+        java.net.URLDecoder.decode(reason, "UTF-8")
+    } catch (e: Exception) {
+        reason
+    }
+
     Scaffold(
+        containerColor = BackgroundLight,
         topBar = {
             TopAppBar(
-                title = { Text("Profile") },
+                title = { Text("Profile", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = BackgroundLight
+                )
             )
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { /* Inactive as per user request */ },
+                onClick = onStartConversation,
                 icon = { Icon(Icons.Default.Send, contentDescription = "Connect") },
-                text = { Text("Start Conversation") },
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                text = { Text("Start Conversation", fontWeight = FontWeight.Bold) },
+                containerColor = Color(0xFFE8DEF8),
+                contentColor = Color(0xFF1D192B),
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-        }
+        },
+        floatingActionButtonPosition = FabPosition.Center
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(24.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp)
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
             // Profile Header
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(80.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
+                        .background(Color(0xFFE8DEF8)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = name.first().toString(),
+                        text = name.firstOrNull()?.toString() ?: "?",
                         style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        color = Color(0xFF1D192B),
+                        fontWeight = FontWeight.Bold
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
@@ -74,82 +106,117 @@ fun ExplanationScreen(
                     Text(
                         text = name,
                         style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1D192B)
                     )
                     Text(
                         text = role,
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
+                        color = PrimaryBlue,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
             
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             
-            // Score Display
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+            // Match Score Banner
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFFE8DEF8))
+                    .padding(16.dp)
             ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         Icons.Default.Star,
-                        contentDescription = "Score",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        contentDescription = "Match",
+                        tint = Color(0xFF1D192B),
                         modifier = Modifier.size(32.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
-                            text = "$score% Match Score",
-                            style = MaterialTheme.typography.titleLarge,
+                            text = "98% Match Score",
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                            color = Color(0xFF1D192B),
+                            style = MaterialTheme.typography.titleMedium
                         )
                         Text(
                             text = "Based on structural overlap in your goals and experiences.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                            color = Color(0xFF49454F),
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-
-            // Reason Display
-            Text(
-                text = "Projects & Experience:",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = reason,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+            
+            // Dynamic Dataset Profile Info
+            if (studentProfile != null) {
+                ProfileSection(title = "Projects & Experience:", content = studentProfile.projects ?: "")
+                ProfileSection(title = "Skills:", content = studentProfile.skills ?: "")
+            } else if (facultyProfile != null) {
+                ProfileSection(title = "Research Interests:", content = facultyProfile.researchInterests ?: "")
+                ProfileSection(title = "Publications & Expertise:", content = facultyProfile.expertise ?: "")
+            } else {
+                ProfileSection(title = "Projects & Experience:", content = decodedReason)
+            }
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            Divider()
+            HorizontalDivider(color = Color.LightGray)
             
             Spacer(modifier = Modifier.height(16.dp))
             
             Text(
-                text = "Connecting with $name can help you avoid common pitfalls and accelerate your progress.",
+                text = "Connecting with \ can help you avoid common pitfalls and accelerate your progress.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = Color.Gray
             )
             
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // Quick Actions
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "LinkedIn",
+                    color = PrimaryBlue,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(PrimaryBlue.copy(alpha = 0.1f))
+                        .clickable {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/search/results/people/?keywords=\"))
+                            context.startActivity(intent)
+                        }
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+                Text(
+                    text = "Email",
+                    color = PrimaryBlue,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(PrimaryBlue.copy(alpha = 0.1f))
+                        .clickable {
+                            val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))
+                            intent.putExtra(Intent.EXTRA_SUBJECT, "Connecting via CampusConnect")
+                            context.startActivity(intent)
+                        }
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(32.dp))
             
             // Feedback Section
-            var feedbackState by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(0) } // 0=None, 1=Up, -1=Down
+            var feedbackState by androidx.compose.runtime.remember { androidx.compose.runtime.mutableIntStateOf(0) }
             
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -158,46 +225,82 @@ fun ExplanationScreen(
                 Text(
                     text = "Was this match helpful?",
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = Color(0xFF1D192B),
+                    fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Thumbs Up
                     OutlinedButton(
                         onClick = { feedbackState = 1 },
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (feedbackState == 1) MaterialTheme.colorScheme.primaryContainer else androidx.compose.ui.graphics.Color.Transparent
+                            containerColor = if (feedbackState == 1) Color(0xFFE8DEF8) else Color.Transparent
                         )
                     ) {
-                        Text("👍 Yes")
+                        Text("?? Yes", color = Color(0xFF1D192B))
                     }
                     
                     Spacer(modifier = Modifier.width(16.dp))
                     
-                    // Thumbs Down
                     OutlinedButton(
                         onClick = { feedbackState = -1 },
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (feedbackState == -1) MaterialTheme.colorScheme.errorContainer else androidx.compose.ui.graphics.Color.Transparent
+                            containerColor = if (feedbackState == -1) MaterialTheme.colorScheme.errorContainer else Color.Transparent
                         )
                     ) {
-                        Text("👎 No")
+                        Text("?? No", color = Color(0xFF1D192B))
                     }
                 }
                 
-                if (feedbackState != 0) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(100.dp)) // padding for FAB
+            }
+        }
+    }
+}
+
+@Composable
+fun ProfileSection(title: String, content: String) {
+    if (content.isBlank() || content == "N/A") return
+    
+    val items = content.split(",").map { 
+        try {
+            java.net.URLDecoder.decode(it, "UTF-8").trim()
+        } catch (e: Exception) {
+            it.trim()
+        }
+    }.filter { it.isNotBlank() }
+    
+    Column(modifier = Modifier.padding(bottom = 16.dp)) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = Color(0xFF1D192B),
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        // Use FlowRow for chips
+        @OptIn(ExperimentalLayoutApi::class)
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items.forEach { item ->
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.White)
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
                     Text(
-                        text = "Thanks! Your feedback helps train the Engine.",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary
+                        text = item,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF49454F)
                     )
                 }
-                
-                Spacer(modifier = Modifier.height(64.dp)) // padding for FAB
             }
         }
     }

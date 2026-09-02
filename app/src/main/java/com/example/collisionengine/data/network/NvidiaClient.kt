@@ -10,7 +10,7 @@ import java.net.URL
 
 object NvidiaClient {
     // Optional: Add your Nvidia API Key here if you want to use the LLM for name extraction
-    private const val NVIDIA_API_KEY = "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"
+    private const val NVIDIA_API_KEY = "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"
     
     suspend fun extractNames(text: String): List<String> = withContext(Dispatchers.IO) {
         if (NVIDIA_API_KEY.isBlank()) {
@@ -55,7 +55,9 @@ object NvidiaClient {
                         } else {
                             content
                         }
-                        return@withContext namesList.split(",").map { it.trim() }.filter { it.isNotBlank() }
+                        var cleanNamesList = namesList.replace(Regex("""<[^>]*>"""), "") // strip any html tags
+                        cleanNamesList = cleanNamesList.replace(Regex("""[*_`~]"""), "") // strip markdown
+                        return@withContext cleanNamesList.split(",").map { it.trim() }.filter { it.isNotBlank() }
                     }
                 }
             }
@@ -68,15 +70,21 @@ object NvidiaClient {
     }
 
     private fun extractNamesRegex(text: String): List<String> {
-        // Look for names bolded by Databricks Genie: **First Last**
-        val regex = Regex("""\*\*(.*?)\*\*""")
-        val matches = regex.findAll(text)
-        val extracted = matches.map { it.groupValues[1].trim() }.toList()
+        val extracted = mutableListOf<String>()
         
+        // Pattern 1: Look for names bolded by Databricks Genie: **First Last**
+        val regexBold = Regex("""\*\*(.*?)\*\*""")
+        extracted.addAll(regexBold.findAll(text).map { it.groupValues[1].trim() })
+
+        // Pattern 2: Look for "student [Name]", "Dr. [Name]", "Prof. [Name]"
+        val regexTitle = Regex("""(?:student|faculty|prof\.|dr\.|by)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})""")
+        extracted.addAll(regexTitle.findAll(text).map { it.groupValues[1].trim() })
+
         // Filter out obvious non-names like "fake news detection"
         return extracted.filter { name -> 
-            val words = name.split(" ")
+            val cleanName = name.replace(Regex("""[*_`~<>]"""), "")
+            val words = cleanName.split(" ")
             words.size in 2..3 && words.all { it.isNotEmpty() && it.first().isUpperCase() }
-        }
+        }.map { it.replace(Regex("""[*_`~<>]"""), "") }.distinct()
     }
 }
