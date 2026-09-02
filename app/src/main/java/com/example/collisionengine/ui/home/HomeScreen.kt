@@ -35,7 +35,8 @@ import com.example.collisionengine.data.state.GlobalProfileState
 fun HomeScreen(
     onNavigateToResearch: () -> Unit,
     onNavigateToPlacement: () -> Unit,
-    onNavigateToNotifications: () -> Unit
+    onNavigateToNotifications: () -> Unit,
+    onMatchClick: (com.example.collisionengine.data.model.ProfileMatch) -> Unit = {}
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("All Collisions") }
@@ -216,7 +217,18 @@ fun HomeScreen(
                         title = "Optimizing LLM Inference on Edge Devices",
                         description = "Explored techniques for quantization and distillation to run large language models on resource-constrained hardware with minimal accuracy loss.",
                         tags = listOf("AI", "Edge Computing", "LLM"),
-                        reportUrl = "https://drive.google.com/file/d/1v9d7OcYYVYjsHLAYyFd8_LqvdkwEHOgy/view?usp=drive_link"
+                        reportUrl = "https://drive.google.com/file/d/1v9d7OcYYVYjsHLAYyFd8_LqvdkwEHOgy/view?usp=drive_link",
+                        onProfileClick = {
+                            onMatchClick(
+                                com.example.collisionengine.data.model.ProfileMatch(
+                                    name = "Dr. Emily Chen",
+                                    role = "Faculty • Computer Science",
+                                    matchReasonTitle = "Research Author",
+                                    matchReasonText = "Optimizing LLM Inference on Edge Devices",
+                                    tags = listOf("AI", "Edge Computing", "LLM")
+                                )
+                            )
+                        }
                     )
                     
                     ResearchPaperPost(
@@ -225,7 +237,18 @@ fun HomeScreen(
                         title = "Graph Neural Networks for Social Recommendation",
                         description = "A novel approach leveraging GNNs to improve friend recommendation algorithms by analyzing complex social network topologies.",
                         tags = listOf("GNN", "Social Networks", "ML"),
-                        reportUrl = "https://drive.google.com/file/d/1vqsG5rlhJ4f2kqHTtv7lc3cH-J2zT0T6/view?usp=drive_link"
+                        reportUrl = "https://drive.google.com/file/d/1vqsG5rlhJ4f2kqHTtv7lc3cH-J2zT0T6/view?usp=drive_link",
+                        onProfileClick = {
+                            onMatchClick(
+                                com.example.collisionengine.data.model.ProfileMatch(
+                                    name = "Michael Ross",
+                                    role = "Computer Science • Year 4",
+                                    matchReasonTitle = "Research Author",
+                                    matchReasonText = "Graph Neural Networks for Social Recommendation",
+                                    tags = listOf("GNN", "Social Networks", "ML")
+                                )
+                            )
+                        }
                     )
                     
                     ResearchPaperPost(
@@ -234,7 +257,18 @@ fun HomeScreen(
                         title = "Sustainable Battery Technologies",
                         description = "Reviewing the latest advancements in solid-state batteries and their potential to replace lithium-ion in the next decade.",
                         tags = listOf("Green Tech", "Hardware", "Energy"),
-                        reportUrl = "https://drive.google.com/file/d/1jjd1HKtg578rUSA1dZmH9hUJjncoOOv4/view?usp=drive_link"
+                        reportUrl = "https://drive.google.com/file/d/1jjd1HKtg578rUSA1dZmH9hUJjncoOOv4/view?usp=drive_link",
+                        onProfileClick = {
+                            onMatchClick(
+                                com.example.collisionengine.data.model.ProfileMatch(
+                                    name = "Sarah Jenkins",
+                                    role = "Electrical Engineering • Year 3",
+                                    matchReasonTitle = "Research Author",
+                                    matchReasonText = "Sustainable Battery Technologies",
+                                    tags = listOf("Green Tech", "Hardware", "Energy")
+                                )
+                            )
+                        }
                     )
                 }
             }
