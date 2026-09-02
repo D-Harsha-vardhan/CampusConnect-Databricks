@@ -138,7 +138,6 @@ fun TopHeader(
 fun SearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    onSearch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TextField(
@@ -159,11 +158,10 @@ fun SearchBar(
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .size(40.dp)
-                    .background(PrimaryBlue, CircleShape)
-                    .clickable { onSearch() },
+                    .background(PrimaryBlue, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Filled.Search, contentDescription = "Submit Search", tint = Color.White)
+                Icon(Icons.Filled.Settings, contentDescription = "Filter", tint = Color.White)
             }
         },
         shape = RoundedCornerShape(30.dp),
@@ -867,11 +865,7 @@ fun ResearchPaperPost(
     title: String,
     description: String,
     tags: List<String>,
-<<<<<<< HEAD
-    onClick: () -> Unit = {}
-=======
     reportUrl: String? = null
->>>>>>> databricks/adithya
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var isLiked by remember { mutableStateOf(false) }
@@ -893,15 +887,11 @@ fun ResearchPaperPost(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 8.dp)
-<<<<<<< HEAD
-            .clickable { onClick() },
-=======
             .clickable {
                 if (!reportUrl.isNullOrBlank()) {
                     showReportDialog = true
                 }
             },
->>>>>>> databricks/adithya
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)

@@ -15,25 +15,6 @@ class ConversationViewModel : ViewModel() {
 
     fun generateMessage(name: String, reason: String) {
         val decodedReason = try {
-<<<<<<< HEAD
-            java.net.URLDecoder.decode(reason, "UTF-8")
-        } catch (e: Exception) {
-            reason
-        }
-        
-        // Smart title handling
-        val isFaculty = name.contains("Dr.", ignoreCase = true) || name.contains("Prof.", ignoreCase = true)
-        val greetingName = if (isFaculty) {
-            name.trim()
-        } else {
-            name.split(" ").firstOrNull() ?: name
-        }
-        
-        // Topic extraction (take first skill/project if comma-separated)
-        val topic = decodedReason.split(",").firstOrNull()?.trim() ?: "your research"
-        
-        val msg = "Hi $greetingName,\n\nI saw on Campus Connect that you have experience with $topic. I'm currently working on something very similar and struggling a bit. I'd love to connect and hear how you approached it!"
-=======
             java.net.URLDecoder.decode(reason, "UTF-8").replace("+", " ")
         } catch (e: Exception) {
             reason.replace("+", " ")
@@ -54,7 +35,6 @@ class ConversationViewModel : ViewModel() {
         val topicPhrase = if (topTopics.isNotBlank()) topTopics else decodedReason.take(50)
 
         val msg = "Hi $greeting,\n\nI came across your profile on Campus Connect regarding your work in $topicPhrase. I'm currently working on a related project and would love to connect, ask a quick question, and exchange insights!"
->>>>>>> databricks/adithya
         _suggestedMessage.value = msg
     }
 

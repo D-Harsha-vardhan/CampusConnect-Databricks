@@ -24,23 +24,11 @@ class PlacementViewModel : ViewModel() {
     private val _queryText = MutableStateFlow(sessionQuery)
     val queryText: StateFlow<String> = _queryText.asStateFlow()
     
-<<<<<<< HEAD
-=======
     private val _messages = MutableStateFlow<List<ChatMessage>>(sessionMessages.toList())
->>>>>>> databricks/adithya
     val messages: StateFlow<List<ChatMessage>> = _messages.asStateFlow()
     
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    companion object {
-        // In-memory chat session persistence
-        private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
-        
-        fun clearSession() {
-            _messages.value = emptyList()
-        }
-    }
 
     fun onQueryChanged(newText: String) {
         _queryText.value = newText
@@ -69,24 +57,15 @@ class PlacementViewModel : ViewModel() {
         viewModelScope.launch {
             val result = DatabricksClient.askGenie(query)
             
-<<<<<<< HEAD
-            // Add AI response, making TopMatch dynamic based on extracted names and keywords
-            val extractedNames = com.example.collisionengine.data.network.NvidiaClient.extractNames(result)
-            val nameMatchedProfiles = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByNames(extractedNames)
-            val keywordMatchedProfiles = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByKeywords(query)
-            
-            val allMatchedProfiles = (nameMatchedProfiles + keywordMatchedProfiles).distinctBy { it.name }.take(5)
-=======
             // Add AI response, making TopMatch dynamic based on extracted names and semantic dataset matching
             val extractedNames = com.example.collisionengine.data.network.NvidiaClient.extractNames(result)
             val matchedProfiles = com.example.collisionengine.data.network.LocalDatasetClient.findMatches(query, result, extractedNames)
->>>>>>> databricks/adithya
             
             val aiMsg = ChatMessage(
                 text = result, 
                 isUser = false, 
-                isTopMatch = allMatchedProfiles.isNotEmpty(),
-                topMatches = allMatchedProfiles
+                isTopMatch = matchedProfiles.isNotEmpty(),
+                topMatches = matchedProfiles
             )
             val finalMessages = _messages.value + aiMsg
             _messages.value = finalMessages

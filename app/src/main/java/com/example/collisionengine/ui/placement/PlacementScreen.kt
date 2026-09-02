@@ -65,15 +65,10 @@ fun PlacementScreen(
                     }
                 },
                 actions = {
-<<<<<<< HEAD
-                    IconButton(onClick = { PlacementViewModel.clearSession() }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Clear Chat", tint = Color.White)
-=======
                     if (messages.isNotEmpty()) {
                         IconButton(onClick = { viewModel.clearChat() }) {
                             Icon(Icons.Filled.Delete, contentDescription = "Clear Chat", tint = Color.LightGray)
                         }
->>>>>>> databricks/adithya
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
