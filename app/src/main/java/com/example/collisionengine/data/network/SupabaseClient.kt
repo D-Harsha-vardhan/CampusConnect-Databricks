@@ -7,7 +7,7 @@ import io.github.jan.supabase.realtime.Realtime
 
 object SupabaseClient {
     // Paste your Project URL here
-    private const val SUPABASE_URL = "https://otdxrxyojmlbllpbbwfi.supabase.co"
+    private const val SUPABASE_URL = "https://ztsgghwtdtxxopxaqnwx.supabase.co"
     
     // Paste your Anon Key here
     private const val SUPABASE_KEY = "sb_publishable_nmRPk6YXjBRhYuViLb1J7Q_OR5q20sO"

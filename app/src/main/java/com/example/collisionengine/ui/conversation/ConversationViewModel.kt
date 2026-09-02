@@ -13,7 +13,10 @@ class ConversationViewModel : ViewModel() {
     private val _suggestedMessage = MutableStateFlow("")
     val suggestedMessage: StateFlow<String> = _suggestedMessage.asStateFlow()
 
+    private var currentReceiver = ""
+
     fun generateMessage(name: String, reason: String) {
+        currentReceiver = name
         val decodedReason = try {
             java.net.URLDecoder.decode(reason, "UTF-8").replace("+", " ")
         } catch (e: Exception) {
@@ -48,8 +51,9 @@ class ConversationViewModel : ViewModel() {
         
         viewModelScope.launch {
             try {
-                val newMessage = com.example.collisionengine.data.models.ChatMessage(
-                    senderId = "user_me",
+                val newMessage = com.example.collisionengine.data.models.SupabaseMessageInsert(
+                    senderId = com.example.collisionengine.data.state.GlobalProfileState.name.value,
+                    receiverId = currentReceiver,
                     content = currentMessage
                 )
                 com.example.collisionengine.data.network.SupabaseClient.client.from("messages").insert(newMessage)

@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.collisionengine.data.models.ChatMessage
+import com.example.collisionengine.data.models.SupabaseChatMessage
 import com.example.collisionengine.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,22 +32,10 @@ fun ChatScreen(
 ) {
     val messages by viewModel.messages.collectAsState()
     var inputText by remember { mutableStateOf("") }
+    val myUserId = com.example.collisionengine.data.state.GlobalProfileState.name.collectAsState().value
 
-    // Seed realistic initial greeting for peer if empty
-    val displayMessages = remember(messages, name) {
-        if (messages.isEmpty()) {
-            val initialPeerText = when {
-                name.contains("Emily", ignoreCase = true) -> "Hi! Thanks for connecting. I saw you were looking at our Edge AI inference research. How can I help?"
-                name.contains("Aarav", ignoreCase = true) -> "Hey! Thanks for reaching out. The PCB design files for the Battery Management System are ready if you want to collaborate!"
-                name.contains("Grace", ignoreCase = true) -> "Hello! I'm glad to connect. Let me know what specific questions you have about Distributed Systems."
-                name.contains("Michael", ignoreCase = true) -> "Hey there! I uploaded the Graph Neural Networks social recommendation dataset. Let me know if you need access."
-                name.contains("Sarah", ignoreCase = true) -> "Hello! Happy to exchange notes on sustainable battery technologies and solid-state materials."
-                else -> "Hi! Glad to connect on Campus Connect. Let's collaborate!"
-            }
-            listOf(ChatMessage(senderId = "peer", content = initialPeerText))
-        } else {
-            messages
-        }
+    LaunchedEffect(name) {
+        viewModel.init(name)
     }
 
     Scaffold(
@@ -150,10 +138,10 @@ fun ChatScreen(
             reverseLayout = true,
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            items(displayMessages.reversed()) { message ->
+            items(messages.reversed()) { message ->
                 ChatBubble(
                     message = message,
-                    isMine = message.senderId == viewModel.myUserId
+                    isMine = message.senderId == myUserId
                 )
                 Spacer(modifier = Modifier.height(10.dp))
             }
@@ -162,7 +150,7 @@ fun ChatScreen(
 }
 
 @Composable
-fun ChatBubble(message: ChatMessage, isMine: Boolean) {
+fun ChatBubble(message: SupabaseChatMessage, isMine: Boolean) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = if (isMine) Arrangement.End else Arrangement.Start

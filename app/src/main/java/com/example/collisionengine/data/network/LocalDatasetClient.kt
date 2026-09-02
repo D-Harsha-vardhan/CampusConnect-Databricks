@@ -112,7 +112,6 @@ object LocalDatasetClient {
         //    c) Direct scanning of database names in AI response
         val candidateNames = mutableListOf<String>()
         candidateNames.addAll(extractedNames)
-        candidateNames.addAll(NvidiaClient.extractNamesRegex(aiResponse))
 
         allStudents.forEach { student ->
             val name = student.name ?: return@forEach
@@ -161,13 +160,27 @@ object LocalDatasetClient {
             }
         }
 
-
-
         return matches.take(4)
     }
 
     fun searchProfilesByNames(names: List<String>): List<ProfileMatch> {
         return findMatches("", "", names)
+    }
+
+    fun searchProfilesByPartialName(query: String): List<ProfileMatch> {
+        if (query.isBlank()) return emptyList()
+        val normQuery = query.lowercase().trim()
+        val results = mutableListOf<ProfileMatch>()
+        
+        allStudents.filter { it.name?.lowercase()?.contains(normQuery) == true }.forEach { student ->
+            results.add(createStudentMatch(student, "", ""))
+        }
+        
+        allFaculty.filter { it.name?.lowercase()?.contains(normQuery) == true }.forEach { faculty ->
+            results.add(createFacultyMatch(faculty, "", ""))
+        }
+        
+        return results.distinctBy { it.name }
     }
 
     private fun createStudentMatch(student: Student, query: String, aiResponse: String): ProfileMatch {

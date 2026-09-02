@@ -58,7 +58,7 @@ class PlacementViewModel : ViewModel() {
             val result = DatabricksClient.askGenie(query)
             
             // Add AI response, making TopMatch dynamic based on extracted names and semantic dataset matching
-            val extractedNames = com.example.collisionengine.data.network.NvidiaClient.extractNames(result)
+            val extractedNames = emptyList<String>()
             val matchedProfiles = com.example.collisionengine.data.network.LocalDatasetClient.findMatches(query, result, extractedNames)
             
             val aiMsg = ChatMessage(

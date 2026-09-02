@@ -20,9 +20,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.collisionengine.ui.components.CustomBottomNavBar
 import com.example.collisionengine.ui.home.HomeScreen
-import com.example.collisionengine.ui.splash.SplashScreen
+
 import com.example.collisionengine.ui.messages.MessagesScreen
 import com.example.collisionengine.ui.profile.ProfileScreen
+import com.example.collisionengine.ui.login.LoginScreen
+import com.example.collisionengine.data.state.GlobalProfileState
+import androidx.compose.runtime.LaunchedEffect
 import com.example.collisionengine.ui.notifications.NotificationsScreen
 import com.example.collisionengine.ui.addpaper.AddPaperScreen
 
@@ -102,18 +105,31 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                 popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(300)) + fadeIn(animationSpec = tween(300)) },
                 popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(300)) + fadeOut(animationSpec = tween(300)) }
             ) {
-                composable(route = Screen.Splash.route) {
-                    SplashScreen(
-                        onSplashComplete = {
+                composable(Screen.Splash.route) {
+                    LoginScreen(
+                        initialIsSplash = true,
+                        onLoginSuccess = {
                             navController.navigate(Screen.Home.route) {
                                 popUpTo(Screen.Splash.route) { inclusive = true }
                             }
                         }
                     )
                 }
+                
+                composable(Screen.Login.route) {
+                    LoginScreen(
+                        initialIsSplash = false,
+                        onLoginSuccess = {
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo(Screen.Login.route) { inclusive = true }
+                            }
+                        }
+                    )
+                }
+
                 composable(route = Screen.Home.route) {
                     HomeScreen(
-                        onNavigateToResearch = { navController.navigate(Screen.Research.route) },
+                        onNavigateToResearch = { query -> navController.navigate(Screen.Research.createRoute(query)) },
                         onNavigateToPlacement = { navController.navigate(Screen.Placement.route) },
                         onNavigateToNotifications = { navController.navigate(Screen.Notifications.route) },
                         onMatchClick = { match ->
@@ -130,9 +146,17 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                         }
                     )
                 }
-                composable(route = Screen.Research.route) {
+                composable(
+                    route = Screen.Research.route,
+                    arguments = listOf(androidx.navigation.navArgument("query") { 
+                        type = androidx.navigation.NavType.StringType
+                        nullable = true 
+                    })
+                ) { backStackEntry ->
+                    val query = backStackEntry.arguments?.getString("query")
                     val viewModel: com.example.collisionengine.ui.research.ResearchViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
                     com.example.collisionengine.ui.research.ResearchScreen(
+                        initialQuery = query,
                         viewModel = viewModel,
                         onNavigateBack = { navController.popBackStack() },
                         onFindCollisions = { query -> 
@@ -179,7 +203,15 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                     )
                 }
                 composable(route = Screen.Profile.route) {
-                    ProfileScreen(onNavigateBack = { navController.popBackStack() })
+                    ProfileScreen(
+                        onNavigateBack = { navController.popBackStack() },
+                        onLogout = {
+                            GlobalProfileState.logout()
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    )
                 }
                 composable(route = Screen.Notifications.route) {
                     NotificationsScreen(onNavigateBack = { navController.popBackStack() })

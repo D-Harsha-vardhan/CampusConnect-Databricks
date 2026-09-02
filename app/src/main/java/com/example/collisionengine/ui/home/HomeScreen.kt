@@ -28,20 +28,41 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.collisionengine.ui.components.*
 import com.example.collisionengine.ui.theme.*
 import com.example.collisionengine.data.state.GlobalProfileState
+import androidx.compose.ui.zIndex
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
-    onNavigateToResearch: () -> Unit,
+    onNavigateToResearch: (String?) -> Unit,
     onNavigateToPlacement: () -> Unit,
     onNavigateToNotifications: () -> Unit,
     onMatchClick: (com.example.collisionengine.data.model.ProfileMatch) -> Unit = {}
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    var searchResults by remember { mutableStateOf<List<com.example.collisionengine.data.model.ProfileMatch>>(emptyList()) }
+    var isDropdownExpanded by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf("All Collisions") }
     var isPlacementLiked by remember { mutableStateOf(false) }
+    
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val scope = rememberCoroutineScope()
+    
+    val speechRecognizerLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            val data = result.data
+            val matches = data?.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS)
+            val spokenText = matches?.firstOrNull()
+            if (!spokenText.isNullOrBlank()) {
+                onNavigateToResearch(spokenText)
+            }
+        }
+    }
     
     var isVisible by remember { mutableStateOf(false) }
     val userName by GlobalProfileState.name.collectAsState()
@@ -90,16 +111,56 @@ fun HomeScreen(
                 visible = isVisible,
                 enter = androidx.compose.animation.slideInVertically(initialOffsetY = { 50 }, animationSpec = androidx.compose.animation.core.tween(300, delayMillis = 100)) + androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(300, delayMillis = 100))
             ) {
-                SearchBar(
-                    query = searchQuery,
-                    onQueryChange = { searchQuery = it },
-                    onSearch = {
-                        val matches = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByNames(listOf(searchQuery))
-                        if (matches.isNotEmpty()) {
-                            onMatchClick(matches.first())
+                Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp).zIndex(10f), contentAlignment = Alignment.Center) {
+                    SearchBar(
+                        query = searchQuery,
+                        onQueryChange = { 
+                            searchQuery = it
+                            if (it.isNotBlank()) {
+                                searchResults = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByPartialName(it)
+                                isDropdownExpanded = true
+                            } else {
+                                isDropdownExpanded = false
+                            }
+                        },
+                        onSearch = {
+                            val matches = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByNames(listOf(searchQuery))
+                            if (matches.isNotEmpty()) {
+                                isDropdownExpanded = false
+                                onMatchClick(matches.first())
+                            }
+                        }
+                    )
+                    
+                    androidx.compose.material3.DropdownMenu(
+                        expanded = isDropdownExpanded && searchResults.isNotEmpty(),
+                        onDismissRequest = { isDropdownExpanded = false },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 300.dp),
+                        properties = androidx.compose.ui.window.PopupProperties(focusable = false),
+                        shape = RoundedCornerShape(24.dp),
+                        containerColor = Color.White,
+                        shadowElevation = 8.dp,
+                        offset = androidx.compose.ui.unit.DpOffset(0.dp, 8.dp)
+                    ) {
+                        searchResults.forEach { match ->
+                            androidx.compose.material3.DropdownMenuItem(
+                                text = { 
+                                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                                        Text(match.name, fontWeight = FontWeight.Bold, color = TextPrimaryLight)
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(match.role, style = MaterialTheme.typography.labelSmall, color = TextSecondaryLight)
+                                    }
+                                },
+                                onClick = {
+                                    isDropdownExpanded = false
+                                    onMatchClick(match)
+                                }
+                            )
                         }
                     }
-                )
+                }
             }
             
             Spacer(modifier = Modifier.height(32.dp))
@@ -111,11 +172,13 @@ fun HomeScreen(
             ) {
                 Column {
                     Text(
-                        text = "Quick Actions",
-                        style = MaterialTheme.typography.titleMedium,
+                        text = "Welcome back,\n$userName 👋",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 28.sp
+                        ),
                         color = TextPrimaryLight,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 24.dp)
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     LazyRow(
@@ -126,7 +189,7 @@ fun HomeScreen(
                             QuickActionCard(icon = Icons.Filled.Group, label = "Peers", onClick = {})
                         }
                         item {
-                            QuickActionCard(icon = Icons.Filled.MenuBook, label = "Papers", onClick = onNavigateToResearch)
+                            QuickActionCard(icon = Icons.Filled.MenuBook, label = "Papers", onClick = { onNavigateToResearch(null) })
                         }
                         item {
                             QuickActionCard(icon = Icons.Filled.HelpOutline, label = "What if ?", onClick = onNavigateToPlacement)
@@ -149,7 +212,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
-                        .clickable { onNavigateToResearch() },
+                        .clickable { onNavigateToResearch(null) },
                     shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(containerColor = PrimaryBlue)
                 ) {
@@ -189,10 +252,26 @@ fun HomeScreen(
                                     Box(
                                         modifier = Modifier
                                             .size(36.dp)
-                                            .background(Color.White, CircleShape),
+                                            .background(Color.White, CircleShape)
+                                            .clickable {
+                                                val intent = android.content.Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                                                    putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                                                    putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, "Describe your problem...")
+                                                }
+                                                try {
+                                                    speechRecognizerLauncher.launch(intent)
+                                                } catch (e: Exception) {
+                                                    android.widget.Toast.makeText(context, "Speech recognition not available.", android.widget.Toast.LENGTH_SHORT).show()
+                                                }
+                                            },
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Icon(Icons.Filled.Mic, contentDescription = "Mic", tint = PrimaryBlue, modifier = Modifier.size(20.dp))
+                                        Icon(
+                                            Icons.Filled.Mic, 
+                                            contentDescription = "Mic", 
+                                            tint = PrimaryBlue, 
+                                            modifier = Modifier.size(20.dp)
+                                        )
                                     }
                                 }
                             }

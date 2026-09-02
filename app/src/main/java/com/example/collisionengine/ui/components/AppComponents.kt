@@ -146,7 +146,6 @@ fun SearchBar(
         onValueChange = onQueryChange,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
             .shadow(4.dp, RoundedCornerShape(30.dp)),
         placeholder = {
             Text("Search for people to connect...", color = TextSecondaryLight)

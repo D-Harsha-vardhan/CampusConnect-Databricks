@@ -3,8 +3,9 @@ package com.example.collisionengine.ui.chat
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.collisionengine.data.models.ChatMessage
+import com.example.collisionengine.data.models.SupabaseChatMessage
 import com.example.collisionengine.data.network.SupabaseClient
+import com.example.collisionengine.data.state.GlobalProfileState
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.postgresChangeFlow
@@ -17,15 +18,19 @@ import kotlinx.coroutines.launch
 
 class ChatViewModel : ViewModel() {
 
-    private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
-    val messages: StateFlow<List<ChatMessage>> = _messages.asStateFlow()
+    private val _messages = MutableStateFlow<List<SupabaseChatMessage>>(emptyList())
+    val messages: StateFlow<List<SupabaseChatMessage>> = _messages.asStateFlow()
 
-    // For the hackathon, we will hardcode a mock connection ID and "my" user ID.
-    // In production, these come from Supabase Auth and the connections table.
-    private val mockConnectionId = "00000000-0000-0000-0000-000000000000"
-    val myUserId = "user_me"
+    // The person you are chatting with
+    private var receiverId = ""
+    private var myUserId = ""
 
-    init {
+    fun init(receiverName: String) {
+        if (this.receiverId == receiverName) return // Already initialized
+        
+        this.receiverId = receiverName
+        this.myUserId = GlobalProfileState.name.value
+        
         fetchMessages()
         subscribeToRealtime()
     }
@@ -35,11 +40,17 @@ class ChatViewModel : ViewModel() {
             try {
                 val fetchedMessages = SupabaseClient.client.from("messages")
                     .select {
-                        // In a real app: eq("connection_id", mockConnectionId)
+                        // Fetch messages where sender=me AND receiver=them OR sender=them AND receiver=me
                     }
-                    .decodeList<ChatMessage>()
+                    .decodeList<SupabaseChatMessage>()
+                    
+                // Filter locally for now to avoid complex Postgrest queries
+                val filteredMessages = fetchedMessages.filter { 
+                    (it.senderId == myUserId && it.receiverId == receiverId) || 
+                    (it.senderId == receiverId && it.receiverId == myUserId)
+                }.sortedBy { it.createdAt }
                 
-                _messages.value = fetchedMessages
+                _messages.value = filteredMessages
             } catch (e: Exception) {
                 Log.e("ChatViewModel", "Error fetching messages", e)
             }
@@ -59,8 +70,17 @@ class ChatViewModel : ViewModel() {
                 channel.subscribe()
 
                 messageFlow.collect { action ->
-                    val newMessage = action.decodeRecord<ChatMessage>()
-                    _messages.value = _messages.value + newMessage
+                    val newMessage = action.decodeRecord<SupabaseChatMessage>()
+                    
+                    // Only add if it belongs to this conversation
+                    if ((newMessage.senderId == myUserId && newMessage.receiverId == receiverId) || 
+                        (newMessage.senderId == receiverId && newMessage.receiverId == myUserId)) {
+                        
+                        // Check if it already exists to avoid duplicates
+                        if (_messages.value.none { it.id == newMessage.id }) {
+                            _messages.value = _messages.value + newMessage
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("ChatViewModel", "Error subscribing to realtime", e)
@@ -73,9 +93,9 @@ class ChatViewModel : ViewModel() {
         
         viewModelScope.launch {
             try {
-                val newMessage = ChatMessage(
-                    // connectionId = mockConnectionId,
+                val newMessage = com.example.collisionengine.data.models.SupabaseMessageInsert(
                     senderId = myUserId,
+                    receiverId = receiverId,
                     content = content
                 )
                 SupabaseClient.client.from("messages").insert(newMessage)

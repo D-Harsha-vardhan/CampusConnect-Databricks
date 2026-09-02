@@ -101,8 +101,6 @@ async def ask_genie(request: AskRequest):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to query Genie Agent: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to query Genie Agent: {str(e)}")
 
 
 if __name__ == "__main__":
