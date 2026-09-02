@@ -36,7 +36,8 @@ import androidx.compose.foundation.lazy.items
 @Composable
 fun ProfileScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToConnections: () -> Unit
+    onNavigateToConnections: () -> Unit = {},
+    onLogout: () -> Unit = {}
 ) {
     var isLiked1 by remember { mutableStateOf(true) }
     var isLiked2 by remember { mutableStateOf(false) }
@@ -292,6 +293,23 @@ fun ProfileScreen(
                     tags = listOf("Research", "Publication"),
                     isLast = index == papers.size - 1
                 )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Logout Button
+            Button(
+                onClick = onLogout,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .height(56.dp)
+                    .bouncyClickable { },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red.copy(alpha = 0.8f)),
+                shape = RoundedCornerShape(16.dp),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+            ) {
+                Text("Logout", fontWeight = FontWeight.Bold, color = Color.White, style = MaterialTheme.typography.titleMedium)
             }
 
             Spacer(modifier = Modifier.height(120.dp)) // Padding for bottom nav

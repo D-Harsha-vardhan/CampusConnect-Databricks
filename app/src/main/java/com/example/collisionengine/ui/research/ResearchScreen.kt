@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,6 +38,7 @@ import com.example.collisionengine.ui.theme.PrimaryBlue
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResearchScreen(
+    initialQuery: String? = null,
     viewModel: ResearchViewModel,
     onNavigateBack: () -> Unit,
     onFindCollisions: (String) -> Unit,
@@ -46,6 +48,28 @@ fun ResearchScreen(
     val messages by viewModel.messages.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val listState = rememberLazyListState()
+    
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    
+    val speechRecognizerLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            val data = result.data
+            val matches = data?.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS)
+            val spokenText = matches?.firstOrNull()
+            if (!spokenText.isNullOrBlank()) {
+                viewModel.onQueryChanged(queryText + if (queryText.isBlank()) spokenText else " $spokenText")
+            }
+        }
+    }
+
+    androidx.compose.runtime.LaunchedEffect(initialQuery) {
+        if (!initialQuery.isNullOrBlank()) {
+            viewModel.onQueryChanged(initialQuery)
+        }
+    }
 
     androidx.compose.runtime.LaunchedEffect(messages.size, isLoading) {
         val total = listState.layoutInfo.totalItemsCount
@@ -225,7 +249,7 @@ fun ResearchScreen(
                         },
                     placeholder = {
                         Text(
-                            "Type your research problem...",
+                            text = "Type your research problem...",
                             color = Color.Gray
                         )
                     },
@@ -238,15 +262,37 @@ fun ResearchScreen(
                     ),
                     shape = RoundedCornerShape(24.dp),
                     trailingIcon = {
-                        IconButton(
-                            onClick = { viewModel.askDatabricks() },
-                            enabled = queryText.isNotBlank() && !isLoading
-                        ) {
-                            Icon(
-                                Icons.Default.Send,
-                                contentDescription = "Send",
-                                tint = if (queryText.isNotBlank()) PrimaryBlue else Color.Gray
-                            )
+                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end = 4.dp)) {
+                                IconButton(
+                                    onClick = {
+                                        val intent = android.content.Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                                            putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                                            putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, "Speak your message...")
+                                        }
+                                        try {
+                                            speechRecognizerLauncher.launch(intent)
+                                        } catch (e: Exception) {
+                                            android.widget.Toast.makeText(context, "Speech recognition not available.", android.widget.Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Mic,
+                                        contentDescription = "Mic",
+                                        tint = Color.Gray
+                                    )
+                                }
+                            
+                            IconButton(
+                                onClick = { viewModel.askDatabricks() },
+                                enabled = queryText.isNotBlank() && !isLoading
+                            ) {
+                                Icon(
+                                    Icons.Filled.Send,
+                                    contentDescription = "Send",
+                                    tint = if (queryText.isNotBlank() && !isLoading) PrimaryBlue else Color.Gray
+                                )
+                            }
                         }
                     }
                 )

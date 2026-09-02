@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,10 +41,13 @@ data class ChatConversation(
 @Composable
 fun MessagesScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToChat: (String) -> Unit = {}
+    onNavigateToChat: (String) -> Unit = {},
+    viewModel: MessagesViewModel = viewModel()
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var showNewChatDialog by remember { mutableStateOf(false) }
+
+    val realConversations by viewModel.realConversations.collectAsState()
 
     val activeConnections = remember {
         listOf(
@@ -57,36 +61,11 @@ fun MessagesScreen(
         )
     }
 
-    val sampleConversations = remember {
-        listOf(
-            ChatConversation(
-                id = "1",
-                name = "Dr. Emily Chen",
-                role = "Faculty • Edge AI",
-                lastMessage = "Quantization techniques are working well on the Raspberry Pi 4 setup! Let me know when you can test.",
-                timeAgo = "10m ago",
-                unreadCount = 1,
-                isOnline = true,
-                avatarColor = PrimaryBlue
-            ),
-            ChatConversation(
-                id = "2",
-                name = "Aarav Bansal",
-                role = "Student • ECE (3rd Year)",
-                lastMessage = "Hey! The PCB design for the Battery Management System is ready. Should I share the schematic files?",
-                timeAgo = "45m ago",
-                unreadCount = 1,
-                isOnline = true,
-                avatarColor = Color(0xFF00897B)
-            )
-        )
-    }
-
-    val filteredConversations = remember(searchQuery, sampleConversations) {
+    val filteredConversations = remember(searchQuery, realConversations) {
         if (searchQuery.isBlank()) {
-            sampleConversations
+            realConversations
         } else {
-            sampleConversations.filter {
+            realConversations.filter {
                 it.name.contains(searchQuery, ignoreCase = true) ||
                 it.lastMessage.contains(searchQuery, ignoreCase = true) ||
                 it.role.contains(searchQuery, ignoreCase = true)

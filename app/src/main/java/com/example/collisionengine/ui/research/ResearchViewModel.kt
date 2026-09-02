@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.example.collisionengine.data.model.ChatMessage
-import kotlinx.coroutines.launch
 
 class ResearchViewModel : ViewModel() {
     companion object {
@@ -58,7 +57,7 @@ class ResearchViewModel : ViewModel() {
             val result = DatabricksClient.askGenie(query)
             
             // Add AI response, making TopMatch dynamic based on extracted names and semantic dataset matching
-            val extractedNames = com.example.collisionengine.data.network.NvidiaClient.extractNames(result)
+            val extractedNames = emptyList<String>()
             val matchedProfiles = com.example.collisionengine.data.network.LocalDatasetClient.findMatches(query, result, extractedNames)
             
             val aiMsg = ChatMessage(

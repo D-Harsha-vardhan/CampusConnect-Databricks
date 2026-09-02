@@ -2,8 +2,13 @@ package com.example.collisionengine.ui.navigation
 
 sealed class Screen(val route: String) {
     object Splash : Screen("splash")
+    object Login : Screen("login")
     object Home : Screen("home")
-    object Research : Screen("research")
+    object Research : Screen("research?query={query}") {
+        fun createRoute(query: String? = null): String {
+            return if (query != null) "research?query=${android.net.Uri.encode(query)}" else "research"
+        }
+    }
     object Placement : Screen("placement")
     
     // Pass query encoded to avoid breaking the navigation string
