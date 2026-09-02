@@ -70,6 +70,34 @@ object LocalDatasetClient {
         return cleanText.contains(cleanName)
     }
 
+    fun getStudentByName(name: String): Student? {
+        val norm = normalizeName(name)
+        if (norm.isBlank()) return null
+        return allStudents.firstOrNull { 
+            val sNorm = normalizeName(it.name)
+            sNorm == norm || (sNorm.isNotBlank() && (sNorm.contains(norm) || norm.contains(sNorm)))
+        }
+    }
+
+    fun getFacultyByName(name: String): Faculty? {
+        val norm = normalizeName(name)
+        if (norm.isBlank()) return null
+        return allFaculty.firstOrNull { 
+            val fNorm = normalizeName(it.name)
+            fNorm == norm || (fNorm.isNotBlank() && (fNorm.contains(norm) || norm.contains(fNorm)))
+        }
+    }
+
+    fun getProjectsForStudent(studentId: String?): List<Project> {
+        if (studentId.isNullOrBlank()) return emptyList()
+        return allProjects.filter { it.studentId == studentId }
+    }
+
+    fun getResearchForFaculty(facultyId: String?): List<Research> {
+        if (facultyId.isNullOrBlank()) return emptyList()
+        return allResearch.filter { it.personId == facultyId }
+    }
+
     fun findMatches(
         query: String,
         aiResponse: String,

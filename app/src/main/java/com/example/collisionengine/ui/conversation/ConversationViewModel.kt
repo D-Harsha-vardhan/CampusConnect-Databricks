@@ -14,9 +14,27 @@ class ConversationViewModel : ViewModel() {
     val suggestedMessage: StateFlow<String> = _suggestedMessage.asStateFlow()
 
     fun generateMessage(name: String, reason: String) {
-        // Simulated AI generation based on the reason
-        val firstName = name.split(" ").firstOrNull() ?: name
-        val msg = "Hi $firstName,\n\nI saw on Campus Connect that you $reason. I'm currently working on something very similar and struggling a bit. I'd love to connect and hear how you approached it!"
+        val decodedReason = try {
+            java.net.URLDecoder.decode(reason, "UTF-8").replace("+", " ")
+        } catch (e: Exception) {
+            reason.replace("+", " ")
+        }
+        
+        val greeting = if (name.startsWith("Dr.", ignoreCase = true) || name.startsWith("Prof.", ignoreCase = true)) {
+            name
+        } else {
+            name.split(" ").firstOrNull() ?: name
+        }
+
+        val topTopics = decodedReason.split(Regex("[,;]+"))
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+            .take(2)
+            .joinToString(" and ")
+
+        val topicPhrase = if (topTopics.isNotBlank()) topTopics else decodedReason.take(50)
+
+        val msg = "Hi $greeting,\n\nI came across your profile on Campus Connect regarding your work in $topicPhrase. I'm currently working on a related project and would love to connect, ask a quick question, and exchange insights!"
         _suggestedMessage.value = msg
     }
 
