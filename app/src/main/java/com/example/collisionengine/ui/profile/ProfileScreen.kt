@@ -43,6 +43,10 @@ fun ProfileScreen(
     val userName by GlobalProfileState.name.collectAsState()
     val userRole by GlobalProfileState.role.collectAsState()
     val userBio by GlobalProfileState.bio.collectAsState()
+    val githubLink by GlobalProfileState.githubLink.collectAsState()
+    val googleScholarLink by GlobalProfileState.googleScholarLink.collectAsState()
+
+    val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
 
     var showEditDialog by remember { mutableStateOf(false) }
     var showConnectionsDialog by remember { mutableStateOf(false) }
@@ -157,6 +161,58 @@ fun ProfileScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (githubLink.isNotBlank()) {
+                        Text(
+                            text = "GitHub",
+                            color = PrimaryBlue,
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(PrimaryBlue.copy(alpha = 0.1f))
+                                .clickable {
+                                    try {
+                                        var url = githubLink.trim()
+                                        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                                            url = "https://$url"
+                                        }
+                                        uriHandler.openUri(url)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                                .padding(horizontal = 12.dp, vertical = 6.dp)
+                        )
+                    }
+                    if (googleScholarLink.isNotBlank()) {
+                        Text(
+                            text = "Google Scholar",
+                            color = PrimaryBlue,
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(PrimaryBlue.copy(alpha = 0.1f))
+                                .clickable {
+                                    try {
+                                        var url = googleScholarLink.trim()
+                                        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                                            url = "https://$url"
+                                        }
+                                        uriHandler.openUri(url)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                                .padding(horizontal = 12.dp, vertical = 6.dp)
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -246,43 +302,80 @@ fun ProfileScreen(
         var editName by remember { mutableStateOf(userName) }
         var editRole by remember { mutableStateOf(userRole) }
         var editBio by remember { mutableStateOf(userBio) }
+        var editGithub by remember { mutableStateOf(githubLink) }
+        var editScholar by remember { mutableStateOf(googleScholarLink) }
         
         AlertDialog(
             onDismissRequest = { showEditDialog = false },
-            title = { Text("Edit Profile") },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(24.dp),
+            title = { 
+                Text(
+                    "Edit Profile", 
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimaryLight
+                ) 
+            },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedTextField(
                         value = editName,
                         onValueChange = { editName = it },
-                        label = { Text("Name") }
+                        label = { Text("Name") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
                     )
                     OutlinedTextField(
                         value = editRole,
                         onValueChange = { editRole = it },
-                        label = { Text("Role") }
+                        label = { Text("Role") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
                     )
                     OutlinedTextField(
                         value = editBio,
                         onValueChange = { editBio = it },
                         label = { Text("Bio") },
-                        maxLines = 3
+                        maxLines = 3,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    OutlinedTextField(
+                        value = editGithub,
+                        onValueChange = { editGithub = it },
+                        label = { Text("GitHub Link") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    OutlinedTextField(
+                        value = editScholar,
+                        onValueChange = { editScholar = it },
+                        label = { Text("Google Scholar Link") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
                     )
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    GlobalProfileState.name.value = editName
-                    GlobalProfileState.role.value = editRole
-                    GlobalProfileState.bio.value = editBio
-                    showEditDialog = false
-                }) {
-                    Text("Save")
+                Button(
+                    onClick = {
+                        GlobalProfileState.name.value = editName
+                        GlobalProfileState.role.value = editRole
+                        GlobalProfileState.bio.value = editBio
+                        GlobalProfileState.githubLink.value = editGithub
+                        GlobalProfileState.googleScholarLink.value = editScholar
+                        showEditDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Save", fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showEditDialog = false }) {
-                    Text("Cancel")
+                    Text("Cancel", color = TextSecondaryLight)
                 }
             }
         )

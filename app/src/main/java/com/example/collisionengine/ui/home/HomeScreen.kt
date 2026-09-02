@@ -35,9 +35,11 @@ import com.example.collisionengine.data.state.GlobalProfileState
 fun HomeScreen(
     onNavigateToResearch: () -> Unit,
     onNavigateToPlacement: () -> Unit,
-    onNavigateToNotifications: () -> Unit
+    onNavigateToNotifications: () -> Unit,
+    onMatchClick: (com.example.collisionengine.data.model.ProfileMatch) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    var activeSearchQuery by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("All Collisions") }
     var isPlacementLiked by remember { mutableStateOf(false) }
     
@@ -90,7 +92,13 @@ fun HomeScreen(
             ) {
                 SearchBar(
                     query = searchQuery,
-                    onQueryChange = { searchQuery = it }
+                    onQueryChange = { 
+                        searchQuery = it 
+                        if (it.isBlank()) activeSearchQuery = ""
+                    },
+                    onSearch = {
+                        activeSearchQuery = searchQuery
+                    }
                 )
             }
             
@@ -101,30 +109,53 @@ fun HomeScreen(
                 visible = isVisible,
                 enter = androidx.compose.animation.slideInVertically(initialOffsetY = { 50 }, animationSpec = androidx.compose.animation.core.tween(300, delayMillis = 150)) + androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(300, delayMillis = 150))
             ) {
-                Column {
-                    Text(
-                        text = "Quick Actions",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = TextPrimaryLight,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 24.dp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 24.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                val searchResults = remember(activeSearchQuery) { com.example.collisionengine.data.network.LocalDatasetClient.searchByNamePartial(activeSearchQuery) }
+                
+                if (searchResults.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        item {
-                            QuickActionCard(icon = Icons.Filled.Group, label = "Peers", onClick = {})
+                        Text(
+                            text = "Matching Profiles",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = TextPrimaryLight,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        searchResults.forEach { match ->
+                            ProfileMatchCard(
+                                match = match,
+                                onClick = { onMatchClick(match) }
+                            )
                         }
-                        item {
-                            QuickActionCard(icon = Icons.Filled.MenuBook, label = "Papers", onClick = onNavigateToResearch)
-                        }
-                        item {
-                            QuickActionCard(icon = Icons.Filled.Code, label = "Prep", onClick = onNavigateToPlacement)
-                        }
-                        item {
-                            QuickActionCard(icon = Icons.Filled.Event, label = "Insights", onClick = {})
+                    }
+                } else {
+                    Column {
+                        Text(
+                            text = "Quick Actions",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = TextPrimaryLight,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 24.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 24.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            item {
+                                QuickActionCard(icon = Icons.Filled.Group, label = "Peers", onClick = {})
+                            }
+                            item {
+                                QuickActionCard(icon = Icons.Filled.MenuBook, label = "Papers", onClick = onNavigateToResearch)
+                            }
+                            item {
+                                QuickActionCard(icon = Icons.Filled.Code, label = "Prep", onClick = onNavigateToPlacement)
+                            }
+                            item {
+                                QuickActionCard(icon = Icons.Filled.Event, label = "Insights", onClick = {})
+                            }
                         }
                     }
                 }
@@ -215,7 +246,18 @@ fun HomeScreen(
                         timeAgo = "2 hours ago",
                         title = "Optimizing LLM Inference on Edge Devices",
                         description = "Explored techniques for quantization and distillation to run large language models on resource-constrained hardware with minimal accuracy loss.",
-                        tags = listOf("AI", "Edge Computing", "LLM")
+                        tags = listOf("AI", "Edge Computing", "LLM"),
+                        onClick = {
+                            onMatchClick(
+                                com.example.collisionengine.data.model.ProfileMatch(
+                                    name = "Dr. Emily Chen",
+                                    role = "Faculty",
+                                    matchReasonTitle = "Recent Research",
+                                    matchReasonText = "Optimizing LLM Inference on Edge Devices",
+                                    tags = listOf("AI", "Edge Computing", "LLM")
+                                )
+                            )
+                        }
                     )
                     
                     ResearchPaperPost(
@@ -223,7 +265,18 @@ fun HomeScreen(
                         timeAgo = "5 hours ago",
                         title = "Graph Neural Networks for Social Recommendation",
                         description = "A novel approach leveraging GNNs to improve friend recommendation algorithms by analyzing complex social network topologies.",
-                        tags = listOf("GNN", "Social Networks", "ML")
+                        tags = listOf("GNN", "Social Networks", "ML"),
+                        onClick = {
+                            onMatchClick(
+                                com.example.collisionengine.data.model.ProfileMatch(
+                                    name = "Michael Ross",
+                                    role = "Researcher",
+                                    matchReasonTitle = "Recent Research",
+                                    matchReasonText = "Graph Neural Networks for Social Recommendation",
+                                    tags = listOf("GNN", "Social Networks", "ML")
+                                )
+                            )
+                        }
                     )
                     
                     ResearchPaperPost(
@@ -231,7 +284,18 @@ fun HomeScreen(
                         timeAgo = "1 day ago",
                         title = "Sustainable Battery Technologies",
                         description = "Reviewing the latest advancements in solid-state batteries and their potential to replace lithium-ion in the next decade.",
-                        tags = listOf("Green Tech", "Hardware", "Energy")
+                        tags = listOf("Green Tech", "Hardware", "Energy"),
+                        onClick = {
+                            onMatchClick(
+                                com.example.collisionengine.data.model.ProfileMatch(
+                                    name = "Sarah Jenkins",
+                                    role = "Student",
+                                    matchReasonTitle = "Recent Research",
+                                    matchReasonText = "Sustainable Battery Technologies",
+                                    tags = listOf("Green Tech", "Hardware", "Energy")
+                                )
+                            )
+                        }
                     )
                 }
             }

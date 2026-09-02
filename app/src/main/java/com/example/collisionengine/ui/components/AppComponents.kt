@@ -137,6 +137,7 @@ fun TopHeader(
 fun SearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
+    onSearch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TextField(
@@ -157,10 +158,11 @@ fun SearchBar(
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .size(40.dp)
-                    .background(PrimaryBlue, CircleShape),
+                    .background(PrimaryBlue, CircleShape)
+                    .clickable { onSearch() },
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Filled.Settings, contentDescription = "Filter", tint = Color.White)
+                Icon(Icons.Filled.Search, contentDescription = "Submit Search", tint = Color.White)
             }
         },
         shape = RoundedCornerShape(30.dp),
@@ -863,7 +865,8 @@ fun ResearchPaperPost(
     timeAgo: String,
     title: String,
     description: String,
-    tags: List<String>
+    tags: List<String>,
+    onClick: () -> Unit = {}
 ) {
     var isLiked by remember { mutableStateOf(false) }
     var isSaved by remember { mutableStateOf(false) }
@@ -871,7 +874,8 @@ fun ResearchPaperPost(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .padding(horizontal = 24.dp, vertical = 8.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)

@@ -116,7 +116,19 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                     HomeScreen(
                         onNavigateToResearch = { navController.navigate(Screen.Research.route) },
                         onNavigateToPlacement = { navController.navigate(Screen.Placement.route) },
-                        onNavigateToNotifications = { navController.navigate(Screen.Notifications.route) }
+                        onNavigateToNotifications = { navController.navigate(Screen.Notifications.route) },
+                        onMatchClick = { match ->
+                            val reasonText = match.matchReasonText.takeIf { it.isNotBlank() } ?: "Direct search match."
+                            val encodedReason = java.net.URLEncoder.encode(reasonText, "UTF-8")
+                            navController.navigate(
+                                Screen.Explanation.createRoute(
+                                    name = match.name,
+                                    role = match.role,
+                                    reason = encodedReason,
+                                    score = 100
+                                )
+                            )
+                        }
                     )
                 }
                 composable(route = Screen.Research.route) {
@@ -218,7 +230,8 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
                 ) { backStackEntry ->
                     val name = backStackEntry.arguments?.getString("name") ?: ""
                     val role = backStackEntry.arguments?.getString("role") ?: ""
-                    val reason = backStackEntry.arguments?.getString("reason") ?: ""
+                    val encodedReason = backStackEntry.arguments?.getString("reason") ?: ""
+                    val reason = try { java.net.URLDecoder.decode(encodedReason, "UTF-8") } catch (e: Exception) { encodedReason }
                     val score = backStackEntry.arguments?.getInt("score") ?: 0
                     
                     com.example.collisionengine.ui.explanation.ExplanationScreen(

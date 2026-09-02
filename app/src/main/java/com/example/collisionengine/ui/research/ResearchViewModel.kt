@@ -37,15 +37,18 @@ class ResearchViewModel : ViewModel() {
         viewModelScope.launch {
             val result = DatabricksClient.askGenie(query)
             
-            // Add AI response, making TopMatch dynamic based on extracted names
+            // Add AI response, making TopMatch dynamic based on extracted names and keywords
             val extractedNames = com.example.collisionengine.data.network.NvidiaClient.extractNames(result)
-            val matchedProfiles = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByNames(extractedNames)
+            val nameMatchedProfiles = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByNames(extractedNames)
+            val keywordMatchedProfiles = com.example.collisionengine.data.network.LocalDatasetClient.searchProfilesByKeywords(query)
+            
+            val allMatchedProfiles = (nameMatchedProfiles + keywordMatchedProfiles).distinctBy { it.name }.take(5)
             
             val aiMsg = ChatMessage(
                 text = result, 
                 isUser = false, 
-                isTopMatch = matchedProfiles.isNotEmpty(),
-                topMatches = matchedProfiles
+                isTopMatch = allMatchedProfiles.isNotEmpty(),
+                topMatches = allMatchedProfiles
             )
             _messages.value = _messages.value + aiMsg
             _isLoading.value = false

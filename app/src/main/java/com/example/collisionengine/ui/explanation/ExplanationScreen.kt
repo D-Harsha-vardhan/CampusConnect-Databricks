@@ -172,7 +172,7 @@ fun ExplanationScreen(
             Spacer(modifier = Modifier.height(16.dp))
             
             Text(
-                text = "Connecting with \ can help you avoid common pitfalls and accelerate your progress.",
+                text = "Connecting with $name can help you avoid common pitfalls and accelerate your progress.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray
             )
@@ -192,7 +192,7 @@ fun ExplanationScreen(
                         .clip(RoundedCornerShape(8.dp))
                         .background(PrimaryBlue.copy(alpha = 0.1f))
                         .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/search/results/people/?keywords=\"))
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/search/results/people/?keywords=$name"))
                             context.startActivity(intent)
                         }
                         .padding(horizontal = 16.dp, vertical = 8.dp)
