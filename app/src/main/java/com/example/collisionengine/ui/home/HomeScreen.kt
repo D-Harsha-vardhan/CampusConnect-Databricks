@@ -122,7 +122,7 @@ fun HomeScreen(
                             QuickActionCard(icon = Icons.Filled.MenuBook, label = "Papers", onClick = onNavigateToResearch)
                         }
                         item {
-                            QuickActionCard(icon = Icons.Filled.Code, label = "Prep", onClick = onNavigateToPlacement)
+                            QuickActionCard(icon = Icons.Filled.QuestionMark, label = "What if ?", onClick = onNavigateToPlacement)
                         }
                         item {
                             QuickActionCard(icon = Icons.Filled.Event, label = "Insights", onClick = {})
