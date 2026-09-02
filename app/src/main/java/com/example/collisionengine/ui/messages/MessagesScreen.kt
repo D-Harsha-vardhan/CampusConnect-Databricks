@@ -120,11 +120,6 @@ fun MessagesScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimaryLight)
                     }
                 },
-                actions = {
-                    IconButton(onClick = { showNewChatDialog = true }) {
-                        Icon(Icons.Default.AddComment, contentDescription = "New Message", tint = PrimaryBlue)
-                    }
-                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         },
@@ -187,17 +182,6 @@ fun MessagesScreen(
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = PrimaryBlue
-                                        )
-                                    }
-                                    if (isOnline) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(14.dp)
-                                                .clip(CircleShape)
-                                                .background(Color.White)
-                                                .padding(2.dp)
-                                                .clip(CircleShape)
-                                                .background(VerifiedGreen)
                                         )
                                     }
                                 }
@@ -289,17 +273,6 @@ fun MessagesScreen(
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = conv.avatarColor
-                                    )
-                                }
-                                if (conv.isOnline) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(13.dp)
-                                            .clip(CircleShape)
-                                            .background(Color.White)
-                                            .padding(2.dp)
-                                            .clip(CircleShape)
-                                            .background(VerifiedGreen)
                                     )
                                 }
                             }

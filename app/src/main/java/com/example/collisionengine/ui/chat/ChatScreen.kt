@@ -75,16 +75,6 @@ fun ChatScreen(
                                     color = PrimaryBlue
                                 )
                             }
-                            Box(
-                                modifier = Modifier
-                                    .size(11.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.White)
-                                    .padding(1.5.dp)
-                                    .clip(CircleShape)
-                                    .background(VerifiedGreen)
-                            )
-                        }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
@@ -93,35 +83,12 @@ fun ChatScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimaryLight
                             )
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(6.dp)
-                                        .clip(CircleShape)
-                                        .background(VerifiedGreen)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "Active now",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = VerifiedGreen,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
                         }
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimaryLight)
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Outlined.Phone, contentDescription = "Call", tint = PrimaryBlue)
-                    }
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Outlined.Videocam, contentDescription = "Video Call", tint = PrimaryBlue)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
