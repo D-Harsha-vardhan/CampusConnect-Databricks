@@ -2,6 +2,7 @@ package com.example.collisionengine.ui.explanation
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,9 +11,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,7 +28,7 @@ import com.example.collisionengine.data.network.LocalDatasetClient
 import com.example.collisionengine.ui.theme.BackgroundLight
 import com.example.collisionengine.ui.theme.PrimaryBlue
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ExplanationScreen(
     name: String,
@@ -40,7 +40,6 @@ fun ExplanationScreen(
 ) {
     val context = LocalContext.current
     
-    // Lookup the full profile from the dataset
     val studentProfile = LocalDatasetClient.getStudentByName(name)
     val facultyProfile = LocalDatasetClient.getFacultyByName(name)
     
@@ -50,14 +49,24 @@ fun ExplanationScreen(
         reason
     }
 
+    val initials = name.split(" ").mapNotNull { it.firstOrNull()?.toString() }.take(2).joinToString("").uppercase()
+
     Scaffold(
         containerColor = BackgroundLight,
         topBar = {
             TopAppBar(
-                title = { Text("Profile", fontWeight = FontWeight.Bold) },
+                title = { Text("Profile", fontWeight = FontWeight.Bold, color = Color(0xFF1D1D1F)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color(0xFF1D1D1F))
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /* TODO */ }) {
+                        Icon(Icons.Outlined.BookmarkBorder, contentDescription = "Bookmark", tint = Color(0xFF1D1D1F))
+                    }
+                    IconButton(onClick = { /* TODO */ }) {
+                        Icon(Icons.Default.Share, contentDescription = "Share", tint = Color(0xFF1D1D1F))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -65,88 +74,163 @@ fun ExplanationScreen(
                 )
             )
         },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = onStartConversation,
-                icon = { Icon(Icons.Default.Send, contentDescription = "Connect") },
-                text = { Text("Start Conversation", fontWeight = FontWeight.Bold) },
-                containerColor = Color(0xFFE8DEF8),
-                contentColor = Color(0xFF1D192B),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        },
-        floatingActionButtonPosition = FabPosition.Center
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(BackgroundLight)
+                    .padding(16.dp)
+            ) {
+                Button(
+                    onClick = onStartConversation,
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
+                    modifier = Modifier.fillMaxWidth().height(50.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Default.Send, contentDescription = "Connect", tint = Color.White)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Start Conversation", fontWeight = FontWeight.Bold, color = Color.White)
+                }
+            }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 16.dp)
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            // Profile Header
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // 1. Profile Header Card (White Card)
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
                     modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFE8DEF8)),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = name.firstOrNull()?.toString() ?: "?",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = Color(0xFF1D192B),
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Column {
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                            .background(PrimaryBlue.copy(alpha = 0.2f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = initials,
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = PrimaryBlue,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = name,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1D192B)
+                        color = Color(0xFF1D1D1F)
                     )
-                    Text(
-                        text = role,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = PrimaryBlue,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.BusinessCenter, 
+                            contentDescription = "Role", 
+                            tint = PrimaryBlue,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = role,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = PrimaryBlue,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    // Quick Actions
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/search/results/people/?keywords=$name"))
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, PrimaryBlue.copy(alpha = 0.3f))
+                        ) {
+                            Icon(Icons.Default.Share, contentDescription = "LinkedIn", tint = PrimaryBlue, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("LinkedIn", color = PrimaryBlue, fontWeight = FontWeight.Bold)
+                        }
+                        
+                        OutlinedButton(
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))
+                                intent.putExtra(Intent.EXTRA_SUBJECT, "Connecting via CampusConnect")
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, PrimaryBlue.copy(alpha = 0.3f))
+                        ) {
+                            Icon(Icons.Default.Email, contentDescription = "Email", tint = PrimaryBlue, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Email", color = PrimaryBlue, fontWeight = FontWeight.Bold)
+                        }
+                    }
                 }
             }
             
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             
-            // Match Score Banner
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFE8DEF8))
-                    .padding(16.dp)
+            // 2. Match Score Banner
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = PrimaryBlue.copy(alpha = 0.05f)),
+                border = BorderStroke(1.dp, PrimaryBlue.copy(alpha = 0.2f)),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        Icons.Default.Star,
-                        contentDescription = "Match",
-                        tint = Color(0xFF1D192B),
-                        modifier = Modifier.size(32.dp)
-                    )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(PrimaryBlue),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Default.Star,
+                            contentDescription = "Match",
+                            tint = Color.White,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
-                            text = "98% Match Score",
+                            text = "98% High Match",
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1D192B),
+                            color = Color(0xFF1D1D1F),
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = "Based on structural overlap in your goals and experiences.",
-                            color = Color(0xFF49454F),
-                            style = MaterialTheme.typography.bodyMedium
+                            text = "Matched based on strong technical domain overlap with your queries.",
+                            color = Color(0xFF757575),
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }
@@ -154,68 +238,145 @@ fun ExplanationScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
             
-            // Dynamic Dataset Profile Info
-            if (studentProfile != null) {
-                ProfileSection(title = "Projects & Experience:", content = studentProfile.projects ?: "")
-                ProfileSection(title = "Skills:", content = studentProfile.skills ?: "")
-            } else if (facultyProfile != null) {
-                ProfileSection(title = "Research Interests:", content = facultyProfile.researchInterests ?: "")
-                ProfileSection(title = "Publications & Expertise:", content = facultyProfile.expertise ?: "")
-            } else {
-                ProfileSection(title = "Projects & Experience:", content = decodedReason)
+            // 3. Featured Projects
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Default.Code,
+                    contentDescription = "Projects",
+                    tint = PrimaryBlue,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Featured Projects",
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1D1D1F),
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
             
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            val projectStr = studentProfile?.projects ?: facultyProfile?.publications ?: decodedReason
+            val projectsList = projectStr.split(Regex("[,;]")).map { it.trim() }.filter { it.isNotBlank() && it != "N/A" }
+            
+            projectsList.forEach { proj ->
+                Card(
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(PrimaryBlue.copy(alpha = 0.1f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Default.CheckCircle,
+                                contentDescription = "Check",
+                                tint = PrimaryBlue,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = proj,
+                            color = Color(0xFF1D1D1F),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
             
-            HorizontalDivider(color = Color.LightGray)
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            Text(
-                text = "Connecting with $name can help you avoid common pitfalls and accelerate your progress.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            // Quick Actions
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            // 4. Skills & Technologies Section
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = "LinkedIn",
-                    color = PrimaryBlue,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(PrimaryBlue.copy(alpha = 0.1f))
-                        .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/search/results/people/?keywords=$name"))
-                            context.startActivity(intent)
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Skills & Technologies",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color(0xFF1D1D1F),
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    val skillStr = studentProfile?.skills ?: facultyProfile?.expertise ?: ""
+                    val items = skillStr.split(",").map { it.trim() }.filter { it.isNotBlank() && it != "N/A" }
+                    
+                    if (items.isNotEmpty()) {
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            items.forEach { item ->
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(Color(0xFFF2F2F7))
+                                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                                ) {
+                                    Text(
+                                        text = item,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color(0xFF1D1D1F),
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                            }
                         }
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-                Text(
-                    text = "Email",
-                    color = PrimaryBlue,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(PrimaryBlue.copy(alpha = 0.1f))
-                        .clickable {
-                            val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))
-                            intent.putExtra(Intent.EXTRA_SUBJECT, "Connecting via CampusConnect")
-                            context.startActivity(intent)
-                        }
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
+                    } else {
+                        Text("No specific skills listed.", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
+                    }
+                }
             }
             
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             
-            // Feedback Section
+            // 5. Collaboration Benefit
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                border = BorderStroke(1.dp, Color(0xFFE5E5EA)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("💡") // Lightbulb emoji
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Collaboration Benefit",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = PrimaryBlue,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Connecting with $name can help you resolve technical blockers, exchange research insights, and accelerate project delivery.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF757575)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // 6. Feedback Section
             var feedbackState by androidx.compose.runtime.remember { androidx.compose.runtime.mutableIntStateOf(0) }
             
             Column(
@@ -224,83 +385,41 @@ fun ExplanationScreen(
             ) {
                 Text(
                     text = "Was this match helpful?",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = Color(0xFF1D192B),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFF757575),
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedButton(
                         onClick = { feedbackState = 1 },
+                        shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (feedbackState == 1) Color(0xFFE8DEF8) else Color.Transparent
-                        )
+                            containerColor = if (feedbackState == 1) PrimaryBlue.copy(alpha = 0.1f) else Color.Transparent
+                        ),
+                        border = BorderStroke(1.dp, if (feedbackState == 1) PrimaryBlue else Color(0xFFE5E5EA))
                     ) {
-                        Text("?? Yes", color = Color(0xFF1D192B))
+                        Text("👍 Yes", color = Color(0xFF1D1D1F))
                     }
                     
                     Spacer(modifier = Modifier.width(16.dp))
                     
                     OutlinedButton(
                         onClick = { feedbackState = -1 },
+                        shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = if (feedbackState == -1) MaterialTheme.colorScheme.errorContainer else Color.Transparent
-                        )
+                        ),
+                        border = BorderStroke(1.dp, if (feedbackState == -1) MaterialTheme.colorScheme.error else Color(0xFFE5E5EA))
                     ) {
-                        Text("?? No", color = Color(0xFF1D192B))
+                        Text("👎 No", color = Color(0xFF1D1D1F))
                     }
                 }
                 
-                Spacer(modifier = Modifier.height(100.dp)) // padding for FAB
-            }
-        }
-    }
-}
-
-@Composable
-fun ProfileSection(title: String, content: String) {
-    if (content.isBlank() || content == "N/A") return
-    
-    val items = content.split(",").map { 
-        try {
-            java.net.URLDecoder.decode(it, "UTF-8").trim()
-        } catch (e: Exception) {
-            it.trim()
-        }
-    }.filter { it.isNotBlank() }
-    
-    Column(modifier = Modifier.padding(bottom = 16.dp)) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            color = Color(0xFF1D192B),
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        // Use FlowRow for chips
-        @OptIn(ExperimentalLayoutApi::class)
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items.forEach { item ->
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color.White)
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = item,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFF49454F)
-                    )
-                }
+                Spacer(modifier = Modifier.height(80.dp)) // padding for bottom bar
             }
         }
     }
