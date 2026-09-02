@@ -10,9 +10,9 @@ import java.net.URL
 
 object DatabricksClient {
     // Credentials placeholder (set your Databricks Genie Agent credentials here or in backend campus/.env)
-    private const val HOST = "YOUR_DATABRICKS_HOST_HERE"
-    private const val TOKEN = "YOUR_DATABRICKS_PAT_HERE"
-    private const val SPACE_ID = "YOUR_DATABRICKS_SPACE_ID_HERE"
+    private const val HOST = "https://dbc-cf0c6ab7-9230.cloud.databricks.com"
+    private const val TOKEN = "dapi707613d3594f0d23e50e00fa7d399977"
+    private const val SPACE_ID = "01f1a698e50d11bf8e9c69c03ce72576"
 
     suspend fun askGenie(question: String): String = withContext(Dispatchers.IO) {
         try {

@@ -865,8 +865,7 @@ fun ResearchPaperPost(
     title: String,
     description: String,
     tags: List<String>,
-    reportUrl: String? = null,
-    onProfileClick: () -> Unit = {}
+    reportUrl: String? = null
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var isLiked by remember { mutableStateOf(false) }
@@ -906,7 +905,11 @@ fun ResearchPaperPost(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { onProfileClick() }
+                    modifier = Modifier.clickable {
+                        if (!reportUrl.isNullOrBlank()) {
+                            showReportDialog = true
+                        }
+                    }
                 ) {
                     Box(
                         modifier = Modifier
