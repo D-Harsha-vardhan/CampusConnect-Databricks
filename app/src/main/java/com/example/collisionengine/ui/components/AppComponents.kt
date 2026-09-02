@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.items
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -863,34 +864,97 @@ fun ResearchPaperPost(
     timeAgo: String,
     title: String,
     description: String,
-    tags: List<String>
+    tags: List<String>,
+    reportUrl: String? = null
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     var isLiked by remember { mutableStateOf(false) }
     var isSaved by remember { mutableStateOf(false) }
+    var showReportDialog by remember { mutableStateOf(false) }
+
+    fun openReport() {
+        if (!reportUrl.isNullOrBlank()) {
+            try {
+                val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(reportUrl))
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                android.widget.Toast.makeText(context, "Could not open report link", android.widget.Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .padding(horizontal = 24.dp, vertical = 8.dp)
+            .clickable {
+                if (!reportUrl.isNullOrBlank()) {
+                    showReportDialog = true
+                }
+            },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Header: Author info
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(PrimaryBlue.copy(alpha = 0.1f), CircleShape),
-                    contentAlignment = Alignment.Center
+            // Header: Author info + See Reports button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable {
+                        if (!reportUrl.isNullOrBlank()) {
+                            showReportDialog = true
+                        }
+                    }
                 ) {
-                    Icon(Icons.Filled.Person, contentDescription = null, tint = PrimaryBlue)
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .background(PrimaryBlue.copy(alpha = 0.12f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = authorName.split(" ")
+                                .filter { it.isNotBlank() && !it.equals("Dr.", ignoreCase = true) && !it.equals("Prof.", ignoreCase = true) }
+                                .take(2)
+                                .mapNotNull { it.firstOrNull()?.toString() }
+                                .joinToString("")
+                                .ifEmpty { authorName.firstOrNull()?.toString() ?: "U" },
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = PrimaryBlue
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text(text = authorName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = TextPrimaryLight)
+                        Text(text = timeAgo, style = MaterialTheme.typography.labelSmall, color = TextSecondaryLight)
+                    }
                 }
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(text = authorName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = TextPrimaryLight)
-                    Text(text = timeAgo, style = MaterialTheme.typography.labelSmall, color = TextSecondaryLight)
+
+                if (!reportUrl.isNullOrBlank()) {
+                    Surface(
+                        onClick = { showReportDialog = true },
+                        shape = RoundedCornerShape(12.dp),
+                        color = PrimaryBlue.copy(alpha = 0.1f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, PrimaryBlue.copy(alpha = 0.3f))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "See Reports",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = PrimaryBlue
+                            )
+                        }
+                    }
                 }
             }
             
@@ -931,9 +995,10 @@ fun ResearchPaperPost(
             // Actions
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(20.dp), verticalAlignment = Alignment.CenterVertically) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable { isLiked = !isLiked }
@@ -947,12 +1012,13 @@ fun ResearchPaperPost(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text("Like", style = MaterialTheme.typography.labelMedium, color = TextSecondaryLight)
                     }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.Outlined.ChatBubbleOutline, contentDescription = "Comment", tint = TextSecondaryLight, modifier = Modifier.size(20.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("Comment", style = MaterialTheme.typography.labelMedium, color = TextSecondaryLight)
+                    if (!reportUrl.isNullOrBlank()) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable { openReport() }
+                        ) {
+                            Text("📄 View Report", style = MaterialTheme.typography.labelMedium, color = PrimaryBlue, fontWeight = FontWeight.SemiBold)
+                        }
                     }
                 }
                 
@@ -971,5 +1037,99 @@ fun ResearchPaperPost(
                 }
             }
         }
+    }
+
+    // Report Dialog
+    if (showReportDialog && !reportUrl.isNullOrBlank()) {
+        AlertDialog(
+            onDismissRequest = { showReportDialog = false },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp)
+                            .background(PrimaryBlue.copy(alpha = 0.15f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = authorName.firstOrNull()?.toString() ?: "U",
+                            fontWeight = FontWeight.Bold,
+                            color = PrimaryBlue
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column {
+                        Text(
+                            text = authorName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = TextPrimaryLight
+                        )
+                        Text(
+                            text = "Research Paper & Report",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TextSecondaryLight
+                        )
+                    }
+                }
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimaryLight
+                    )
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextSecondaryLight
+                    )
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = Color(0xFFF0F7FF),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, PrimaryBlue.copy(alpha = 0.2f)),
+                        modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("📄", fontSize = 20.sp)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Full Research Document available on Google Drive.",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = PrimaryBlue,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showReportDialog = false
+                        openReport()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("View Report", fontWeight = FontWeight.Bold, color = Color.White)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { showReportDialog = false },
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Cancel", color = TextSecondaryLight)
+                }
+            },
+            shape = RoundedCornerShape(20.dp),
+            containerColor = Color.White
+        )
     }
 }
